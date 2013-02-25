@@ -12,6 +12,7 @@ namespace UV_DLP_3D_Printer
      */
     public class SliceBuildConfig
     {
+        public static int FILE_VERSION = 1;
         public enum eBuildDirection 
         {
             Top_Down,
@@ -177,6 +178,11 @@ namespace UV_DLP_3D_Printer
                 LoadGCodes();
                 XmlReader xr = (XmlReader)XmlReader.Create(filename);
                 xr.ReadStartElement("SliceBuildConfig");
+                int ver = int.Parse(xr.ReadElementString("FileVersion"));
+                if (ver != FILE_VERSION) 
+                {
+                    return false; // I may try to implement some backward compatibility here...
+                }
                 dpmmX = double.Parse(xr.ReadElementString("DotsPermmX"));
                 dpmmY = double.Parse(xr.ReadElementString("DotsPermmY"));
                 xres = int.Parse(xr.ReadElementString("XResolution"));
@@ -210,6 +216,7 @@ namespace UV_DLP_3D_Printer
             {
                 XmlWriter xw =XmlWriter.Create(filename);
                 xw.WriteStartElement("SliceBuildConfig");
+                xw.WriteElementString("FileVersion",FILE_VERSION.ToString());
                 xw.WriteElementString("DotsPermmX", dpmmX.ToString());
                 xw.WriteElementString("DotsPermmY", dpmmY.ToString());
                 xw.WriteElementString("XResolution", xres.ToString());
@@ -243,13 +250,13 @@ namespace UV_DLP_3D_Printer
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("(****Build and Slicing Parameters****)\r\n");
-            sb.Append("(pix per mm X           = " + String.Format("{0:0000}",dpmmX) + " px/mm )\r\n");
-            sb.Append("(pix per mm Y           = " + String.Format("{0:0000}",dpmmY) + " px/mm )\r\n");
+            sb.Append("(pix per mm X           = " + dpmmX + " px/mm )\r\n");
+            sb.Append("(pix per mm Y           = " + dpmmY + " px/mm )\r\n");
             sb.Append("(X resolution            = " + xres + " px )\r\n");
             sb.Append("(Y resolution            = " + yres + " px )\r\n");
             sb.Append("(X Pixel Offset          = " + XOffset + " px )\r\n");
             sb.Append("(Y Pixel Offset          = " + YOffset + " px )\r\n");
-            sb.Append("(Layer thickness         = " + String.Format("{0:0000}",ZThick) + " ms )\r\n");
+            sb.Append("(Layer thickness         = " + ZThick + " mm )\r\n");
             sb.Append("(Layer Time              = " + layertime_ms + " ms )\r\n");
             sb.Append("(First Layer Time        = " + firstlayertime_ms + " ms )\r\n");
             sb.Append("(Blanking Layer Time     = " + blanktime_ms + " ms )\r\n");

@@ -19,6 +19,13 @@ namespace UV_DLP_3D_Printer
 {
     public partial class frmMain : Form
     {
+        private enum eMOUSEMODE 
+        {
+            eView,
+            eModelMove,
+            eModelRotate,
+            eModelScale
+        }
         bool loaded = false;               
         //Engine3d UVDLPApp.Instance().Engine3D = new Engine3d();              
         frmDLP m_frmdlp = new frmDLP();
@@ -26,13 +33,14 @@ namespace UV_DLP_3D_Printer
         frmControl m_frmcontrol = new frmControl();
         frmSlice m_frmSlice = new frmSlice();
         frmGCodeRaw m_sendgcode = new frmGCodeRaw();
+        eMOUSEMODE m_mousemode = eMOUSEMODE.eView;
 
-        private bool lmdown, rmdown;
+        private bool lmdown, rmdown, mmdown;
         private int mdx, mdy;
         float orbitypos = 0;
         float orbitxpos = -80;
         float orbitdist = -200;
-
+        float yoffset = -10.0f;
         public frmMain()
         {
             InitializeComponent();
@@ -44,8 +52,15 @@ namespace UV_DLP_3D_Printer
             UVDLPApp.Instance().m_buildmgr.PrintStatus += new delPrintStatus(PrintStatus);
             UVDLPApp.Instance().m_buildmgr.PrintLayer += new delPrinterLayer(PrintLayer);
             DebugLogger.Instance().LoggerStatusEvent += new LoggerStatusHandler(LoggerStatusEvent);
+            glControl1.MouseWheel += new MouseEventHandler(glControl1_MouseWheel);
             UVDLPApp.Instance().m_deviceinterface.StatusEvent += new DeviceInterface.DeviceInterfaceStatus(DeviceStatusEvent);
             SetConnectionStatus();
+        }
+
+        void glControl1_MouseWheel(object sender, MouseEventArgs e)
+        {
+            //throw new NotImplementedException();
+            //DebugLogger.Instance().LogRecord(e.Delta.ToString());
         }
         private void SetTimeMessage(String message) 
         {
@@ -292,7 +307,7 @@ namespace UV_DLP_3D_Printer
                 else 
                 {
                     chkWireframe.Checked = false;
-                    glControl1.Invalidate();
+                    DisplayFunc();
                     vScrollBar1.Maximum = 1;
                     vScrollBar1.Value = 0;
                     ShowObjectInfo();
@@ -319,7 +334,6 @@ namespace UV_DLP_3D_Printer
                         ln.m_color = Color.Red;
                         UVDLPApp.Instance().Engine3D.AddLine(ln);
                     }
-                    //glControl1.Invalidate();
                     DisplayFunc();
                 }
                 //render the 2d slice
@@ -435,7 +449,7 @@ namespace UV_DLP_3D_Printer
           GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
           GL.LoadIdentity();
 
-          GL.Translate(0, -10, orbitdist);
+          GL.Translate(0, yoffset, orbitdist);
           GL.Rotate(orbitypos, 0, 1, 0);
           GL.Rotate(orbitxpos, 1, 0, 0);
 
@@ -464,6 +478,11 @@ namespace UV_DLP_3D_Printer
         {
             mdx = e.X;
             mdy = e.Y;
+            if (e.Button == MouseButtons.Middle)
+            {
+                mmdown = true;
+            }
+            
             if (e.Button == MouseButtons.Left)
             {
                 lmdown = true;
@@ -479,6 +498,10 @@ namespace UV_DLP_3D_Printer
 
         private void glControl1_MouseUp(object sender, MouseEventArgs e)
         {
+            if (e.Button == MouseButtons.Middle)
+            {
+                mmdown = false;
+            }
             if (e.Button == MouseButtons.Left)
             {
                 lmdown = false;
@@ -493,19 +516,25 @@ namespace UV_DLP_3D_Printer
         private void glControl1_MouseMove(object sender, MouseEventArgs e)
         {
             double dx = 0, dy = 0;
-            if (lmdown || rmdown)
+            if (lmdown || rmdown || mmdown)
             {
                 dx = e.X - mdx;
                 dy = e.Y - mdy;
                 mdx = e.X;
                 mdy = e.Y;
             }
-
+            if (mmdown) 
+            {
+                // view goes up and down along the y
+                dx /= 2;
+                dy /= 2;
+                yoffset += (float) dy;
+                glControl1.Invalidate();
+            }
             if (lmdown)
             {
                 dx /= 2;
                 dy /= 2;
-                //UVDLPApp.Instance().Engine3D.m_camera.viewmat.Rotate(-dy, dx, 0);
                 orbitypos += (float)dx;
                 orbitxpos += (float)dy;
 
@@ -513,8 +542,8 @@ namespace UV_DLP_3D_Printer
             }
             if (rmdown)
             {
-                dx /= 2;// UVDLPApp.Instance().Engine3D.m_camera.m_scalex;
-                dy /= 2;// UVDLPApp.Instance().Engine3D.m_camera.m_scaley;
+                dx /= 2;
+                dy /= 2;
                 orbitdist += (float)dy;
                 glControl1.Invalidate();
 
@@ -569,7 +598,6 @@ namespace UV_DLP_3D_Printer
                 float sf = Single.Parse(txtScale.Text);
                 UVDLPApp.Instance().m_selectedobject.Scale(sf);
                 ShowObjectInfo();
-                //glControl1.Invalidate();
                 DisplayFunc();
 
             }
@@ -893,7 +921,7 @@ namespace UV_DLP_3D_Printer
             }
         }
         #endregion Move functions
-
+        #region Rotate functions
         private void cmdXRDec_Click(object sender, EventArgs e)
         {
             try
@@ -989,6 +1017,16 @@ namespace UV_DLP_3D_Printer
             {
                 DebugLogger.Instance().LogError(ex.Message);
             }
+        }
+        #endregion
+        private void mnuView_Click(object sender, EventArgs e)
+        {
+            m_mousemode = eMOUSEMODE.eView;
+        }
+
+        private void mnuMove_Click(object sender, EventArgs e)
+        {
+            m_mousemode = eMOUSEMODE.eModelMove;
         }
     }
 }

@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.glControl1 = new OpenTK.GLControl();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -95,6 +96,9 @@
             this.lblMainMessage = new System.Windows.Forms.ToolStripLabel();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.lblTime = new System.Windows.Forms.ToolStripLabel();
+            this.cmdActions = new System.Windows.Forms.ToolStripSplitButton();
+            this.mnuView = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuMove = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -257,6 +261,7 @@
             this.txtGCode.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtGCode.Size = new System.Drawing.Size(1164, 492);
             this.txtGCode.TabIndex = 0;
+            this.txtGCode.WordWrap = false;
             // 
             // panel1
             // 
@@ -334,6 +339,7 @@
             this.cmdControl,
             this.cmdSlice1,
             this.toolStripSeparator4,
+            this.cmdActions,
             this.lblMainMessage,
             this.lblTime});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
@@ -781,6 +787,32 @@
             this.lblTime.Name = "lblTime";
             this.lblTime.Size = new System.Drawing.Size(0, 52);
             // 
+            // cmdActions
+            // 
+            this.cmdActions.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.cmdActions.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuView,
+            this.mnuMove});
+            this.cmdActions.Image = ((System.Drawing.Image)(resources.GetObject("cmdActions.Image")));
+            this.cmdActions.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.cmdActions.Name = "cmdActions";
+            this.cmdActions.Size = new System.Drawing.Size(64, 52);
+            this.cmdActions.Text = "Actions";
+            // 
+            // mnuView
+            // 
+            this.mnuView.Name = "mnuView";
+            this.mnuView.Size = new System.Drawing.Size(152, 24);
+            this.mnuView.Text = "View";
+            this.mnuView.Click += new System.EventHandler(this.mnuView_Click);
+            // 
+            // mnuMove
+            // 
+            this.mnuMove.Name = "mnuMove";
+            this.mnuMove.Size = new System.Drawing.Size(152, 24);
+            this.mnuMove.Text = "Move";
+            this.mnuMove.Click += new System.EventHandler(this.mnuMove_Click);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -891,6 +923,9 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripLabel lblMainMessage;
         private System.Windows.Forms.ToolStripLabel lblTime;
+        private System.Windows.Forms.ToolStripSplitButton cmdActions;
+        private System.Windows.Forms.ToolStripMenuItem mnuView;
+        private System.Windows.Forms.ToolStripMenuItem mnuMove;
     }
 }
 

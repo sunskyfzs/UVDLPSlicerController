@@ -1,4 +1,7 @@
 02/25/2013
+	Added middle mouse button to control Up/Down view
+
+02/25/2013 Alpha 04
 	Added in the ability to load multiple objects
 	Implemented Move / Rotate / Scale
 	implemented Slicing of entire scene

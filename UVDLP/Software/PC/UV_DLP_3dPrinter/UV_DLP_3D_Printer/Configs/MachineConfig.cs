@@ -17,6 +17,7 @@ namespace UV_DLP_3D_Printer
      */
     public class MachineConfig
     {
+        public const int FILE_VERSION = 1; // this should change every time the format changes
         public  double m_XDLPRes; // the X resolution of the DLP projector in pixels
         public  double m_YDLPRes; // the Y resolution of the DLP projector in pixels
         public double m_PlatXSize; // the X size of the build platform in mm
@@ -36,6 +37,11 @@ namespace UV_DLP_3D_Printer
                 bool retval = false;
                 XmlReader xr = XmlReader.Create(filename);
                 xr.ReadStartElement("MachineConfig");
+                int ver = int.Parse(xr.ReadElementString("FileVersion"));
+                if (ver != FILE_VERSION) 
+                {
+                    return false;
+                }
                 m_XDLPRes = double.Parse(xr.ReadElementString("DLP_X_Res"));
                 m_YDLPRes = double.Parse(xr.ReadElementString("DLP_Y_Res"));
                 m_PlatXSize = double.Parse(xr.ReadElementString("PlatformXSize"));
@@ -68,6 +74,7 @@ namespace UV_DLP_3D_Printer
                 XmlWriter xw = XmlWriter.Create(filename);
                 xw.WriteStartDocument();
                     xw.WriteStartElement("MachineConfig");
+                        xw.WriteElementString("FileVersion", FILE_VERSION.ToString());
                         xw.WriteElementString("DLP_X_Res", m_XDLPRes.ToString());
                         xw.WriteElementString("DLP_Y_Res", m_YDLPRes.ToString());
                         xw.WriteElementString("PlatformXSize", m_PlatXSize.ToString());
@@ -99,7 +106,7 @@ namespace UV_DLP_3D_Printer
             m_PlatXSize = 102.0;
             m_PlatYSize = 77.0;
             m_PlatZSize = 100; // 100 mm default, we have to load this
-            m_ZMaxFeedrate = 10;
+            m_ZMaxFeedrate = 100;
             m_monitorid = "";
             CalcPixPerMM();
             m_driverconfig = new DeviceDriverConfig();

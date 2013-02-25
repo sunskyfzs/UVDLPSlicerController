@@ -141,7 +141,7 @@ const bool max_software_endstops = true; //If true, axis won't move to coordinat
 //-----------------------------------------------------------------------
 const int X_MAX_LENGTH = 200;
 const int Y_MAX_LENGTH = 200;
-const int Z_MAX_LENGTH = 100;
+const int Z_MAX_LENGTH = 250;
 
 //-----------------------------------------------------------------------
 //// MOVEMENT SETTINGS
