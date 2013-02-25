@@ -16,6 +16,7 @@ namespace UV_DLP_3D_Printer
     public enum eAppEvent 
     {
         eModelLoaded,
+        eModelRemoved,
         eGCodeLoaded,
         eGCodeSaved
     }
@@ -36,7 +37,9 @@ namespace UV_DLP_3D_Printer
         // the simple 3d graphic engine we're using along with OpenGL
         public Engine3d m_engine3d = new Engine3d();
         // the current model we're working with
-        public Object3d m_obj = null;
+        public Object3d m_selectedobject = null;
+        // the scene object used for slicing
+        private Object3d m_sceneobject = null;
         // the current machine configuration
         public MachineConfig m_printerinfo = new MachineConfig();
         // the current building / slicing profile
@@ -88,10 +91,48 @@ namespace UV_DLP_3D_Printer
                 AppEvent(ev, message);
             }
         }
+        public void CalcScene() 
+        {
+            m_sceneobject = new Object3d();
+            foreach(Object3d obj in m_engine3d.m_objects)
+            {
+                m_sceneobject.Add(obj);
+            }
+        }
+        public Object3d Scene 
+        {
+            get 
+            {
+                return m_sceneobject;
+            }
+        }
+        public void MakeCurrent(Object3d obj)         
+        {
+        
+        }
+        public void RemoveCurrentModel() 
+        {
+            m_engine3d.RemoveObject(m_selectedobject);
+            m_selectedobject = null;
+            RaiseAppEvent(eAppEvent.eModelRemoved, "model removed");
+
+        }
         public bool LoadModel(String filename) 
         {
             try
             {
+                Object3d obj = new Object3d();
+
+                if (obj.LoadSTL(filename) == false)
+                {
+                    return false;
+                }
+                else
+                {
+                    m_engine3d.AddObject(obj);
+                    m_selectedobject = obj;
+                    m_slicefile = null; // the slice file is not longer current
+                }
                 RaiseAppEvent(eAppEvent.eModelLoaded, "Model Loaded");
                 return true;
             }
@@ -101,6 +142,7 @@ namespace UV_DLP_3D_Printer
                 return false;
             }
         }
+
         void SliceEv(Slicer.eSliceEvent ev, int layer, int totallayers) 
         {
             String path = "";
@@ -111,7 +153,7 @@ namespace UV_DLP_3D_Printer
                     if (m_buildparms.exportimages) 
                     {
                         // get the model name
-                        String modelname = m_obj.m_fullname;
+                        String modelname = m_selectedobject.m_fullname;
                         // strip off the file extension
                         path = Path.GetDirectoryName(modelname);
                         path += UVDLPApp.m_pathsep;
@@ -129,7 +171,7 @@ namespace UV_DLP_3D_Printer
                     if (m_buildparms.exportimages)
                     {
                         // get the model name
-                        String modelname = m_obj.m_fullname;
+                        String modelname = m_selectedobject.m_fullname;
                         // strip off the file extension
                         path = Path.GetDirectoryName(modelname);
                         path += UVDLPApp.m_pathsep;
@@ -166,8 +208,8 @@ namespace UV_DLP_3D_Printer
             try
             {
                 //get the path of the current object file
-                String path = Path.GetDirectoryName(m_obj.m_fullname);
-                string fn = Path.GetFileNameWithoutExtension(m_obj.m_fullname);
+                String path = Path.GetDirectoryName(m_selectedobject.m_fullname);
+                string fn = Path.GetFileNameWithoutExtension(m_selectedobject.m_fullname);
                 if (!UVDLPApp.Instance().m_gcode.Load(path + UVDLPApp.m_pathsep + fn + ".gcode"))
                 {
                     DebugLogger.Instance().LogRecord("Cannot load GCode File " + path + m_pathsep + fn + ".gcode");
@@ -185,8 +227,8 @@ namespace UV_DLP_3D_Printer
             try
             {
                 //get the path of the current object file
-                String path = Path.GetDirectoryName(m_obj.m_fullname);
-                string fn = Path.GetFileNameWithoutExtension(m_obj.m_fullname);
+                String path = Path.GetDirectoryName(m_selectedobject.m_fullname); // change to scene object name
+                string fn = Path.GetFileNameWithoutExtension(m_selectedobject.m_fullname);
                 if (!UVDLPApp.Instance().m_gcode.Save(path + UVDLPApp.m_pathsep + fn + ".gcode"))
                 {
                     DebugLogger.Instance().LogRecord("Cannot save GCode File " + path + m_pathsep + fn + ".gcode");

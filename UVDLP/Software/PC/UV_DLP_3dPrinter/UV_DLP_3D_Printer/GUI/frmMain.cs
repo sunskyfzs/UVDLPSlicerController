@@ -47,6 +47,14 @@ namespace UV_DLP_3D_Printer
             UVDLPApp.Instance().m_deviceinterface.StatusEvent += new DeviceInterface.DeviceInterfaceStatus(DeviceStatusEvent);
             SetConnectionStatus();
         }
+        private void SetTimeMessage(String message) 
+        {
+            lblTime.Text = message;
+        }
+        private void SetMainMessage(String message) 
+        {
+            lblMainMessage.Text = message;
+        }
         /*
          This handles specific events triggered by the app
          */
@@ -60,6 +68,11 @@ namespace UV_DLP_3D_Printer
             {
                 switch (ev) 
                 {
+                    case eAppEvent.eModelRemoved: 
+                        //the current model was removed
+                        ShowObjectInfo();
+                        DisplayFunc();
+                        break;
                     case eAppEvent.eGCodeLoaded:
                         break;
                     case eAppEvent.eGCodeSaved:
@@ -93,6 +106,39 @@ namespace UV_DLP_3D_Printer
                 cmdStop.Enabled = false;
 
             }
+        }
+
+        private void SetupSceneTree() 
+        {
+            treeScene.Nodes.Clear();//clear the old
+
+            TreeNode scenenode = new TreeNode("Scene");
+            treeScene.Nodes.Add(scenenode);
+            foreach (Object3d obj in UVDLPApp.Instance().Engine3D.m_objects) 
+            {
+                obj.FindMinMax();
+                TreeNode objnode = new TreeNode(obj.Name);
+                objnode.Tag = obj;
+                if (obj == UVDLPApp.Instance().m_selectedobject)  // expand this node
+                {
+                    objnode.Expand();
+                }
+                scenenode.Nodes.Add(objnode);
+                //String minmax = "Nu
+                String Numpoints = "Num Points = " + obj.NumPoints.ToString();
+                objnode.Nodes.Add(Numpoints);
+                String Numpolys = "Num Polys = " + obj.NumPolys.ToString();
+                objnode.Nodes.Add(Numpolys);
+                objnode.Nodes.Add("Min points = (" + String.Format("{0:0.00}", obj.m_min.x) + "," + String.Format("{0:0.00}", obj.m_min.y) + "," + String.Format("{0:0.00}", obj.m_min.z) + ")");
+                objnode.Nodes.Add("Max points = (" + String.Format("{0:0.00}", obj.m_max.x) + "," + String.Format("{0:0.00}", obj.m_max.y) + "," + String.Format("{0:0.00}", obj.m_max.z) + ")");
+                double xs, ys, zs;
+                xs = obj.m_max.x - obj.m_min.x;
+                ys = obj.m_max.y - obj.m_min.y;
+                zs = obj.m_max.z - obj.m_min.z;                
+                objnode.Nodes.Add("Size = (" + String.Format("{0:0.00}", xs) + "," + String.Format("{0:0.00}", ys) + "," + String.Format("{0:0.00}", zs) + ")");
+
+            }
+             
         }
         /*
          This function is called when the device status changes
@@ -168,6 +214,7 @@ namespace UV_DLP_3D_Printer
                         }
                         break;
                 }
+                SetMainMessage(message);
                 DebugLogger.Instance().LogRecord(message);
             }
         }
@@ -203,6 +250,7 @@ namespace UV_DLP_3D_Printer
                 switch (ev)
                 {
                     case Slicer.eSliceEvent.eSliceStarted:
+                        SetMainMessage("Slicing Started");
                         break;
                     case Slicer.eSliceEvent.eLayerSliced:
                         break;
@@ -211,6 +259,9 @@ namespace UV_DLP_3D_Printer
                         txtGCode.Text = UVDLPApp.Instance().m_gcode.RawGCode;
                         vScrollBar1.Maximum = totallayers;
                         vScrollBar1.Value = 0;
+                        SetMainMessage("Slicing Completed");
+                        String timeest = BuildManager.EstimateBuildTime(UVDLPApp.Instance().m_gcode);
+                        SetTimeMessage("Estimated Build Time: " + timeest);
                         break;
                 }
             }
@@ -220,17 +271,9 @@ namespace UV_DLP_3D_Printer
         {
             try
             {
-                UVDLPApp.Instance().m_obj.FindMinMax();
-                txtFileInfo.Text = "Name = " + UVDLPApp.Instance().m_obj.Name + "\r\n";
-                txtFileInfo.Text += "# polygons = " + UVDLPApp.Instance().m_obj.NumPolys + "\r\n";
-                txtFileInfo.Text += "# points = " + UVDLPApp.Instance().m_obj.NumPoints + "\r\n";
-                txtFileInfo.Text += "Min points = (" + String.Format("{0:0.00}",UVDLPApp.Instance().m_obj.m_min.x) + "," + String.Format("{0:0.00}",UVDLPApp.Instance().m_obj.m_min.y) + "," + String.Format("{0:0.00}",UVDLPApp.Instance().m_obj.m_min.z) + ")\r\n";
-                txtFileInfo.Text += "Max points = (" + String.Format("{0:0.00}",UVDLPApp.Instance().m_obj.m_max.x) + "," + String.Format("{0:0.00}",UVDLPApp.Instance().m_obj.m_max.y) + "," + String.Format("{0:0.00}",UVDLPApp.Instance().m_obj.m_max.z) + ")\r\n";
-                double xs, ys, zs;
-                xs = UVDLPApp.Instance().m_obj.m_max.x - UVDLPApp.Instance().m_obj.m_min.x;
-                ys = UVDLPApp.Instance().m_obj.m_max.y - UVDLPApp.Instance().m_obj.m_min.y;
-                zs = UVDLPApp.Instance().m_obj.m_max.z - UVDLPApp.Instance().m_obj.m_min.z;
-                txtFileInfo.Text += "Size = (" + String.Format("{0:0.00}", xs) + "," + String.Format("{0:0.00}", ys) + "," + String.Format("{0:0.00}", zs) + ")\r\n";
+                
+                //UVDLPApp.Instance().m_selectedobject.FindMinMax();
+                SetupSceneTree();
             }
             catch (Exception) { }
         
@@ -242,21 +285,17 @@ namespace UV_DLP_3D_Printer
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK) 
             {
-                UVDLPApp.Instance().m_obj = new Object3d();
-                if (UVDLPApp.Instance().m_obj.LoadSTL(openFileDialog1.FileName) == false)
+                if (UVDLPApp.Instance().LoadModel(openFileDialog1.FileName) == false)
                 {
                     MessageBox.Show("Error loading file " + openFileDialog1.FileName);
                 }
                 else 
                 {
-                    ShowObjectInfo();
                     chkWireframe.Checked = false;
-                    UVDLPApp.Instance().Engine3D.RemoveAllObjects();
-                    UVDLPApp.Instance().Engine3D.AddObject(UVDLPApp.Instance().m_obj);
-                    UVDLPApp.Instance().m_slicefile = null;
                     glControl1.Invalidate();
                     vScrollBar1.Maximum = 1;
                     vScrollBar1.Value = 0;
+                    ShowObjectInfo();
                 }
             }
         }
@@ -280,7 +319,8 @@ namespace UV_DLP_3D_Printer
                         ln.m_color = Color.Red;
                         UVDLPApp.Instance().Engine3D.AddLine(ln);
                     }
-                    glControl1.Invalidate();
+                    //glControl1.Invalidate();
+                    DisplayFunc();
                 }
                 //render the 2d slice
                 Bitmap bmp = null;
@@ -488,19 +528,17 @@ namespace UV_DLP_3D_Printer
 
         private void chkWireframe_CheckedChanged(object sender, EventArgs e)
         {
-            if (UVDLPApp.Instance().m_obj == null) return;
-            UVDLPApp.Instance().m_obj.m_wireframe = chkWireframe.Checked;
-            //glControl1.Invalidate();
+            if (UVDLPApp.Instance().m_selectedobject == null) return;
+            UVDLPApp.Instance().m_selectedobject.m_wireframe = chkWireframe.Checked;
             DisplayFunc();
         }
 
         private void cmdCenter_Click(object sender, EventArgs e)
         {
-            if (UVDLPApp.Instance().m_obj == null) return;
-            Point3d center = UVDLPApp.Instance().m_obj.CalcCenter();
-            UVDLPApp.Instance().m_obj.Translate((float)-center.x, (float)-center.y,(float) -center.z);
+            if (UVDLPApp.Instance().m_selectedobject == null) return;
+            Point3d center = UVDLPApp.Instance().m_selectedobject.CalcCenter();
+            UVDLPApp.Instance().m_selectedobject.Translate((float)-center.x, (float)-center.y,(float) -center.z);
             ShowObjectInfo();
-           // glControl1.Invalidate();
             DisplayFunc();
         }
 
@@ -511,15 +549,14 @@ namespace UV_DLP_3D_Printer
 
         private void cmdPlace_Click(object sender, EventArgs e)
         {
-            if (UVDLPApp.Instance().m_obj == null) return;
+            if (UVDLPApp.Instance().m_selectedobject == null) 
+                return;
+            Point3d center = UVDLPApp.Instance().m_selectedobject.CalcCenter();
+            UVDLPApp.Instance().m_selectedobject.FindMinMax();
+            float zlev = (float)UVDLPApp.Instance().m_selectedobject.m_min.z;
 
-            Point3d center = UVDLPApp.Instance().m_obj.CalcCenter();
-            UVDLPApp.Instance().m_obj.FindMinMax();
-            float zlev = (float)UVDLPApp.Instance().m_obj.m_min.z;
-
-            UVDLPApp.Instance().m_obj.Translate((float)-center.x, (float)-center.y, (float)-zlev);
+            UVDLPApp.Instance().m_selectedobject.Translate((float)0, (float)0, (float)-zlev);
             ShowObjectInfo();
-            //glControl1.Invalidate();
             DisplayFunc();
         }
 
@@ -527,11 +564,13 @@ namespace UV_DLP_3D_Printer
         {
             try
             {
-                if (UVDLPApp.Instance().m_obj == null) return;
+                if (UVDLPApp.Instance().m_selectedobject == null) 
+                    return;
                 float sf = Single.Parse(txtScale.Text);
-                UVDLPApp.Instance().m_obj.Scale(sf);
+                UVDLPApp.Instance().m_selectedobject.Scale(sf);
                 ShowObjectInfo();
-                glControl1.Invalidate();
+                //glControl1.Invalidate();
+                DisplayFunc();
 
             }
             catch (Exception) 
@@ -612,6 +651,11 @@ namespace UV_DLP_3D_Printer
         {
             frmMachineConfig mf = new frmMachineConfig();
             mf.ShowDialog();
+            UVDLPApp.Instance().Engine3D.RemoveAllLines();
+            UVDLPApp.Instance().Engine3D.AddGrid();
+            UVDLPApp.Instance().Engine3D.AddPlatCube();
+            DisplayFunc();
+            //
         }
 
         private void cmdStop_Click(object sender, EventArgs e)
@@ -710,6 +754,240 @@ namespace UV_DLP_3D_Printer
             catch (Exception ex)
             {
                 DebugLogger.Instance().LogRecord(ex.Message);
+            }
+        }
+
+        /*
+         This function does 2 things,
+         * when a node is click that is an object node, it sets
+         * the App current object to be the clicked object
+         * when an obj in the tree view is right clicked, it shows the context menu
+         */
+        private void treeScene_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Node.Tag != null)
+            {
+                UVDLPApp.Instance().m_selectedobject = (Object3d)e.Node.Tag;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)  // we right clicked a menu item, check and see if it has a tag
+                {
+                    contextMenuStrip1.Show(e.Location);
+                }            
+            }
+        }
+
+        private void cmdRemoveObject_Click(object sender, EventArgs e)
+        {
+            // delete the current selected object
+            if (UVDLPApp.Instance().m_selectedobject != null) 
+            {
+                UVDLPApp.Instance().RemoveCurrentModel();
+
+            }
+
+        }
+        #region Move functions
+        private void cmdXDec_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (UVDLPApp.Instance().m_selectedobject == null)
+                    return;
+                float val = float.Parse(txtXTrans.Text);
+                val *= -1;
+                UVDLPApp.Instance().m_selectedobject.Translate(val, 0, 0);
+                ShowObjectInfo();
+                DisplayFunc();
+            }
+            catch (Exception ex) 
+            {
+                DebugLogger.Instance().LogError(ex.Message);
+            }
+        }
+
+        private void cmdXInc_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (UVDLPApp.Instance().m_selectedobject == null)
+                    return;
+                float val = float.Parse(txtXTrans.Text);
+                UVDLPApp.Instance().m_selectedobject.Translate(val, 0, 0);
+                ShowObjectInfo();
+                DisplayFunc();
+            }
+            catch (Exception ex)
+            {
+                DebugLogger.Instance().LogError(ex.Message);
+            }
+        }
+
+        private void cmdYDec_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (UVDLPApp.Instance().m_selectedobject == null)
+                    return;
+                float val = float.Parse(txtYTrans.Text);
+                val *= -1;
+                UVDLPApp.Instance().m_selectedobject.Translate(0, val, 0);
+                ShowObjectInfo();
+                DisplayFunc();
+            }
+            catch (Exception ex)
+            {
+                DebugLogger.Instance().LogError(ex.Message);
+            }
+        }
+
+        private void cmdYInc_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (UVDLPApp.Instance().m_selectedobject == null)
+                    return;
+                float val = float.Parse(txtYTrans.Text);
+                val *= 1;
+                UVDLPApp.Instance().m_selectedobject.Translate(0, val, 0);
+                ShowObjectInfo();
+                DisplayFunc();
+            }
+            catch (Exception ex)
+            {
+                DebugLogger.Instance().LogError(ex.Message);
+            }
+        }
+
+        private void cmdZdec_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (UVDLPApp.Instance().m_selectedobject == null)
+                    return;
+                float val = float.Parse(txtZTrans.Text);
+                val *= -1;
+                UVDLPApp.Instance().m_selectedobject.Translate(0, 0,val);
+                ShowObjectInfo();
+                DisplayFunc();
+            }
+            catch (Exception ex)
+            {
+                DebugLogger.Instance().LogError(ex.Message);
+            }
+        }
+
+        private void cmdZInc_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (UVDLPApp.Instance().m_selectedobject == null)
+                    return;
+                float val = float.Parse(txtZTrans.Text);
+                val *= 1;
+                UVDLPApp.Instance().m_selectedobject.Translate(0, 0,val);
+                ShowObjectInfo();
+                DisplayFunc();
+            }
+            catch (Exception ex)
+            {
+                DebugLogger.Instance().LogError(ex.Message);
+            }
+        }
+        #endregion Move functions
+
+        private void cmdXRDec_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (UVDLPApp.Instance().m_selectedobject == null)
+                    return;
+                
+                UVDLPApp.Instance().m_selectedobject.Rotate(-(90 * 0.0174532925f), 0, 0);
+                ShowObjectInfo();
+                DisplayFunc();
+            }
+            catch (Exception ex)
+            {
+                DebugLogger.Instance().LogError(ex.Message);
+            }
+        }
+
+        private void cmdXRInc_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (UVDLPApp.Instance().m_selectedobject == null)
+                    return;
+                UVDLPApp.Instance().m_selectedobject.Rotate((90 * 0.0174532925f), 0, 0);
+                ShowObjectInfo();
+                DisplayFunc();
+            }
+            catch (Exception ex)
+            {
+                DebugLogger.Instance().LogError(ex.Message);
+            }
+        }
+
+        private void cmdYRDec_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (UVDLPApp.Instance().m_selectedobject == null)
+                    return;
+                UVDLPApp.Instance().m_selectedobject.Rotate(0,-(90*0.0174532925f), 0);
+                ShowObjectInfo();
+                DisplayFunc();
+            }
+            catch (Exception ex)
+            {
+                DebugLogger.Instance().LogError(ex.Message);
+            }
+        }
+
+        private void cmdYRInc_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (UVDLPApp.Instance().m_selectedobject == null)
+                    return;
+                UVDLPApp.Instance().m_selectedobject.Rotate(0, 90 * 0.0174532925f, 0);
+                ShowObjectInfo();
+                DisplayFunc();
+            }
+            catch (Exception ex)
+            {
+                DebugLogger.Instance().LogError(ex.Message);
+            }
+        }
+
+        private void cmdZRDec_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (UVDLPApp.Instance().m_selectedobject == null)
+                    return;
+                UVDLPApp.Instance().m_selectedobject.Rotate(0, 0, -(90*0.0174532925f));
+                ShowObjectInfo();
+                DisplayFunc();
+            }
+            catch (Exception ex)
+            {
+                DebugLogger.Instance().LogError(ex.Message);
+            }
+        }
+
+        private void cmdZRInc_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (UVDLPApp.Instance().m_selectedobject == null)
+                    return;
+                UVDLPApp.Instance().m_selectedobject.Rotate(0, 0, 90 * 0.0174532925f);
+                ShowObjectInfo();
+                DisplayFunc();
+            }
+            catch (Exception ex)
+            {
+                DebugLogger.Instance().LogError(ex.Message);
             }
         }
     }

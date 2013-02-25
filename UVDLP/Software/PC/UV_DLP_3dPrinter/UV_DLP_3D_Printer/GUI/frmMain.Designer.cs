@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.txtFileInfo = new System.Windows.Forms.TextBox();
             this.glControl1 = new OpenTK.GLControl();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.cmdScale = new System.Windows.Forms.Button();
@@ -70,6 +70,31 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.txtLog = new System.Windows.Forms.TextBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.treeScene = new System.Windows.Forms.TreeView();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.cmdRemoveObject = new System.Windows.Forms.ToolStripMenuItem();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tbMove = new System.Windows.Forms.TabPage();
+            this.tbRotate = new System.Windows.Forms.TabPage();
+            this.cmdXDec = new System.Windows.Forms.Button();
+            this.cmdXInc = new System.Windows.Forms.Button();
+            this.txtXTrans = new System.Windows.Forms.TextBox();
+            this.txtYTrans = new System.Windows.Forms.TextBox();
+            this.cmdYInc = new System.Windows.Forms.Button();
+            this.cmdYDec = new System.Windows.Forms.Button();
+            this.txtZTrans = new System.Windows.Forms.TextBox();
+            this.cmdZInc = new System.Windows.Forms.Button();
+            this.cmdZdec = new System.Windows.Forms.Button();
+            this.tbScale = new System.Windows.Forms.TabPage();
+            this.cmdXRDec = new System.Windows.Forms.Button();
+            this.cmdXRInc = new System.Windows.Forms.Button();
+            this.cmdZRInc = new System.Windows.Forms.Button();
+            this.cmdZRDec = new System.Windows.Forms.Button();
+            this.cmdYRInc = new System.Windows.Forms.Button();
+            this.cmdYRDec = new System.Windows.Forms.Button();
+            this.lblMainMessage = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.lblTime = new System.Windows.Forms.ToolStripLabel();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -84,21 +109,16 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            this.contextMenuStrip1.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tbMove.SuspendLayout();
+            this.tbRotate.SuspendLayout();
+            this.tbScale.SuspendLayout();
             this.SuspendLayout();
             // 
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // txtFileInfo
-            // 
-            this.txtFileInfo.Dock = System.Windows.Forms.DockStyle.Top;
-            this.txtFileInfo.Location = new System.Drawing.Point(0, 0);
-            this.txtFileInfo.Multiline = true;
-            this.txtFileInfo.Name = "txtFileInfo";
-            this.txtFileInfo.ReadOnly = true;
-            this.txtFileInfo.Size = new System.Drawing.Size(235, 155);
-            this.txtFileInfo.TabIndex = 1;
             // 
             // glControl1
             // 
@@ -127,12 +147,8 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.cmdScale);
-            this.splitContainer1.Panel1.Controls.Add(this.txtScale);
-            this.splitContainer1.Panel1.Controls.Add(this.txtFileInfo);
-            this.splitContainer1.Panel1.Controls.Add(this.cmdPlace);
-            this.splitContainer1.Panel1.Controls.Add(this.chkWireframe);
-            this.splitContainer1.Panel1.Controls.Add(this.cmdCenter);
+            this.splitContainer1.Panel1.Controls.Add(this.tabControl1);
+            this.splitContainer1.Panel1.Controls.Add(this.treeScene);
             // 
             // splitContainer1.Panel2
             // 
@@ -146,7 +162,7 @@
             // 
             // cmdScale
             // 
-            this.cmdScale.Location = new System.Drawing.Point(16, 356);
+            this.cmdScale.Location = new System.Drawing.Point(6, 29);
             this.cmdScale.Name = "cmdScale";
             this.cmdScale.Size = new System.Drawing.Size(93, 45);
             this.cmdScale.TabIndex = 4;
@@ -156,7 +172,7 @@
             // 
             // txtScale
             // 
-            this.txtScale.Location = new System.Drawing.Point(16, 417);
+            this.txtScale.Location = new System.Drawing.Point(6, 91);
             this.txtScale.Name = "txtScale";
             this.txtScale.Size = new System.Drawing.Size(68, 22);
             this.txtScale.TabIndex = 5;
@@ -164,7 +180,7 @@
             // 
             // cmdPlace
             // 
-            this.cmdPlace.Location = new System.Drawing.Point(14, 289);
+            this.cmdPlace.Location = new System.Drawing.Point(107, 15);
             this.cmdPlace.Name = "cmdPlace";
             this.cmdPlace.Size = new System.Drawing.Size(95, 45);
             this.cmdPlace.TabIndex = 3;
@@ -175,7 +191,7 @@
             // chkWireframe
             // 
             this.chkWireframe.AutoSize = true;
-            this.chkWireframe.Location = new System.Drawing.Point(14, 178);
+            this.chkWireframe.Location = new System.Drawing.Point(35, 218);
             this.chkWireframe.Name = "chkWireframe";
             this.chkWireframe.Size = new System.Drawing.Size(95, 21);
             this.chkWireframe.TabIndex = 0;
@@ -185,7 +201,7 @@
             // 
             // cmdCenter
             // 
-            this.cmdCenter.Location = new System.Drawing.Point(14, 220);
+            this.cmdCenter.Location = new System.Drawing.Point(6, 15);
             this.cmdCenter.Name = "cmdCenter";
             this.cmdCenter.Size = new System.Drawing.Size(95, 45);
             this.cmdCenter.TabIndex = 2;
@@ -288,7 +304,7 @@
             this.picSlice.Dock = System.Windows.Forms.DockStyle.Fill;
             this.picSlice.Location = new System.Drawing.Point(0, 0);
             this.picSlice.Name = "picSlice";
-            this.picSlice.Size = new System.Drawing.Size(1236, 576);
+            this.picSlice.Size = new System.Drawing.Size(1170, 576);
             this.picSlice.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picSlice.TabIndex = 17;
             this.picSlice.TabStop = false;
@@ -316,7 +332,10 @@
             this.cmdDisconnect,
             this.toolStripSeparator2,
             this.cmdControl,
-            this.cmdSlice1});
+            this.cmdSlice1,
+            this.toolStripSeparator4,
+            this.lblMainMessage,
+            this.lblTime});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1208, 55);
@@ -514,6 +533,254 @@
             this.txtLog.Size = new System.Drawing.Size(1457, 96);
             this.txtLog.TabIndex = 0;
             // 
+            // treeScene
+            // 
+            this.treeScene.Dock = System.Windows.Forms.DockStyle.Top;
+            this.treeScene.Location = new System.Drawing.Point(0, 0);
+            this.treeScene.Name = "treeScene";
+            this.treeScene.Size = new System.Drawing.Size(235, 252);
+            this.treeScene.TabIndex = 6;
+            this.treeScene.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeScene_NodeMouseClick);
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.cmdRemoveObject});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 28);
+            // 
+            // cmdRemoveObject
+            // 
+            this.cmdRemoveObject.Name = "cmdRemoveObject";
+            this.cmdRemoveObject.Size = new System.Drawing.Size(180, 24);
+            this.cmdRemoveObject.Text = "Remove Object";
+            this.cmdRemoveObject.Click += new System.EventHandler(this.cmdRemoveObject_Click);
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tbMove);
+            this.tabControl1.Controls.Add(this.tbRotate);
+            this.tabControl1.Controls.Add(this.tbScale);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(0, 252);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(235, 408);
+            this.tabControl1.TabIndex = 7;
+            // 
+            // tbMove
+            // 
+            this.tbMove.Controls.Add(this.txtZTrans);
+            this.tbMove.Controls.Add(this.cmdZInc);
+            this.tbMove.Controls.Add(this.cmdZdec);
+            this.tbMove.Controls.Add(this.txtYTrans);
+            this.tbMove.Controls.Add(this.cmdYInc);
+            this.tbMove.Controls.Add(this.cmdYDec);
+            this.tbMove.Controls.Add(this.txtXTrans);
+            this.tbMove.Controls.Add(this.cmdXInc);
+            this.tbMove.Controls.Add(this.cmdXDec);
+            this.tbMove.Controls.Add(this.cmdCenter);
+            this.tbMove.Controls.Add(this.cmdPlace);
+            this.tbMove.Location = new System.Drawing.Point(4, 25);
+            this.tbMove.Name = "tbMove";
+            this.tbMove.Padding = new System.Windows.Forms.Padding(3);
+            this.tbMove.Size = new System.Drawing.Size(227, 379);
+            this.tbMove.TabIndex = 0;
+            this.tbMove.Text = "Move";
+            this.tbMove.UseVisualStyleBackColor = true;
+            // 
+            // tbRotate
+            // 
+            this.tbRotate.Controls.Add(this.cmdYRInc);
+            this.tbRotate.Controls.Add(this.cmdYRDec);
+            this.tbRotate.Controls.Add(this.cmdZRInc);
+            this.tbRotate.Controls.Add(this.cmdZRDec);
+            this.tbRotate.Controls.Add(this.cmdXRInc);
+            this.tbRotate.Controls.Add(this.cmdXRDec);
+            this.tbRotate.Location = new System.Drawing.Point(4, 25);
+            this.tbRotate.Name = "tbRotate";
+            this.tbRotate.Padding = new System.Windows.Forms.Padding(3);
+            this.tbRotate.Size = new System.Drawing.Size(227, 379);
+            this.tbRotate.TabIndex = 1;
+            this.tbRotate.Text = "Rotate";
+            this.tbRotate.UseVisualStyleBackColor = true;
+            // 
+            // cmdXDec
+            // 
+            this.cmdXDec.Location = new System.Drawing.Point(7, 77);
+            this.cmdXDec.Name = "cmdXDec";
+            this.cmdXDec.Size = new System.Drawing.Size(75, 34);
+            this.cmdXDec.TabIndex = 4;
+            this.cmdXDec.Text = "X-";
+            this.cmdXDec.UseVisualStyleBackColor = true;
+            this.cmdXDec.Click += new System.EventHandler(this.cmdXDec_Click);
+            // 
+            // cmdXInc
+            // 
+            this.cmdXInc.Location = new System.Drawing.Point(143, 77);
+            this.cmdXInc.Name = "cmdXInc";
+            this.cmdXInc.Size = new System.Drawing.Size(75, 34);
+            this.cmdXInc.TabIndex = 5;
+            this.cmdXInc.Text = "X+";
+            this.cmdXInc.UseVisualStyleBackColor = true;
+            this.cmdXInc.Click += new System.EventHandler(this.cmdXInc_Click);
+            // 
+            // txtXTrans
+            // 
+            this.txtXTrans.Location = new System.Drawing.Point(88, 83);
+            this.txtXTrans.Name = "txtXTrans";
+            this.txtXTrans.Size = new System.Drawing.Size(48, 22);
+            this.txtXTrans.TabIndex = 6;
+            this.txtXTrans.Text = "10";
+            this.txtXTrans.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // txtYTrans
+            // 
+            this.txtYTrans.Location = new System.Drawing.Point(88, 130);
+            this.txtYTrans.Name = "txtYTrans";
+            this.txtYTrans.Size = new System.Drawing.Size(48, 22);
+            this.txtYTrans.TabIndex = 9;
+            this.txtYTrans.Text = "10";
+            this.txtYTrans.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // cmdYInc
+            // 
+            this.cmdYInc.Location = new System.Drawing.Point(143, 124);
+            this.cmdYInc.Name = "cmdYInc";
+            this.cmdYInc.Size = new System.Drawing.Size(75, 34);
+            this.cmdYInc.TabIndex = 8;
+            this.cmdYInc.Text = "Y+";
+            this.cmdYInc.UseVisualStyleBackColor = true;
+            this.cmdYInc.Click += new System.EventHandler(this.cmdYInc_Click);
+            // 
+            // cmdYDec
+            // 
+            this.cmdYDec.Location = new System.Drawing.Point(7, 124);
+            this.cmdYDec.Name = "cmdYDec";
+            this.cmdYDec.Size = new System.Drawing.Size(75, 34);
+            this.cmdYDec.TabIndex = 7;
+            this.cmdYDec.Text = "Y-";
+            this.cmdYDec.UseVisualStyleBackColor = true;
+            this.cmdYDec.Click += new System.EventHandler(this.cmdYDec_Click);
+            // 
+            // txtZTrans
+            // 
+            this.txtZTrans.Location = new System.Drawing.Point(88, 177);
+            this.txtZTrans.Name = "txtZTrans";
+            this.txtZTrans.Size = new System.Drawing.Size(48, 22);
+            this.txtZTrans.TabIndex = 12;
+            this.txtZTrans.Text = "10";
+            this.txtZTrans.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // cmdZInc
+            // 
+            this.cmdZInc.Location = new System.Drawing.Point(143, 171);
+            this.cmdZInc.Name = "cmdZInc";
+            this.cmdZInc.Size = new System.Drawing.Size(75, 34);
+            this.cmdZInc.TabIndex = 11;
+            this.cmdZInc.Text = "Z+";
+            this.cmdZInc.UseVisualStyleBackColor = true;
+            this.cmdZInc.Click += new System.EventHandler(this.cmdZInc_Click);
+            // 
+            // cmdZdec
+            // 
+            this.cmdZdec.Location = new System.Drawing.Point(7, 171);
+            this.cmdZdec.Name = "cmdZdec";
+            this.cmdZdec.Size = new System.Drawing.Size(75, 34);
+            this.cmdZdec.TabIndex = 10;
+            this.cmdZdec.Text = "Z-";
+            this.cmdZdec.UseVisualStyleBackColor = true;
+            this.cmdZdec.Click += new System.EventHandler(this.cmdZdec_Click);
+            // 
+            // tbScale
+            // 
+            this.tbScale.Controls.Add(this.cmdScale);
+            this.tbScale.Controls.Add(this.txtScale);
+            this.tbScale.Controls.Add(this.chkWireframe);
+            this.tbScale.Location = new System.Drawing.Point(4, 25);
+            this.tbScale.Name = "tbScale";
+            this.tbScale.Size = new System.Drawing.Size(227, 379);
+            this.tbScale.TabIndex = 2;
+            this.tbScale.Text = "Scale";
+            this.tbScale.UseVisualStyleBackColor = true;
+            // 
+            // cmdXRDec
+            // 
+            this.cmdXRDec.Location = new System.Drawing.Point(7, 42);
+            this.cmdXRDec.Name = "cmdXRDec";
+            this.cmdXRDec.Size = new System.Drawing.Size(75, 39);
+            this.cmdXRDec.TabIndex = 0;
+            this.cmdXRDec.Text = "X-";
+            this.cmdXRDec.UseVisualStyleBackColor = true;
+            this.cmdXRDec.Click += new System.EventHandler(this.cmdXRDec_Click);
+            // 
+            // cmdXRInc
+            // 
+            this.cmdXRInc.Location = new System.Drawing.Point(113, 42);
+            this.cmdXRInc.Name = "cmdXRInc";
+            this.cmdXRInc.Size = new System.Drawing.Size(75, 39);
+            this.cmdXRInc.TabIndex = 1;
+            this.cmdXRInc.Text = "X+";
+            this.cmdXRInc.UseVisualStyleBackColor = true;
+            this.cmdXRInc.Click += new System.EventHandler(this.cmdXRInc_Click);
+            // 
+            // cmdZRInc
+            // 
+            this.cmdZRInc.Location = new System.Drawing.Point(113, 132);
+            this.cmdZRInc.Name = "cmdZRInc";
+            this.cmdZRInc.Size = new System.Drawing.Size(75, 39);
+            this.cmdZRInc.TabIndex = 3;
+            this.cmdZRInc.Text = "Z+";
+            this.cmdZRInc.UseVisualStyleBackColor = true;
+            this.cmdZRInc.Click += new System.EventHandler(this.cmdZRInc_Click);
+            // 
+            // cmdZRDec
+            // 
+            this.cmdZRDec.Location = new System.Drawing.Point(7, 132);
+            this.cmdZRDec.Name = "cmdZRDec";
+            this.cmdZRDec.Size = new System.Drawing.Size(75, 39);
+            this.cmdZRDec.TabIndex = 2;
+            this.cmdZRDec.Text = "Z-";
+            this.cmdZRDec.UseVisualStyleBackColor = true;
+            this.cmdZRDec.Click += new System.EventHandler(this.cmdZRDec_Click);
+            // 
+            // cmdYRInc
+            // 
+            this.cmdYRInc.Location = new System.Drawing.Point(113, 87);
+            this.cmdYRInc.Name = "cmdYRInc";
+            this.cmdYRInc.Size = new System.Drawing.Size(75, 39);
+            this.cmdYRInc.TabIndex = 5;
+            this.cmdYRInc.Text = "Y+";
+            this.cmdYRInc.UseVisualStyleBackColor = true;
+            this.cmdYRInc.Click += new System.EventHandler(this.cmdYRInc_Click);
+            // 
+            // cmdYRDec
+            // 
+            this.cmdYRDec.Location = new System.Drawing.Point(7, 87);
+            this.cmdYRDec.Name = "cmdYRDec";
+            this.cmdYRDec.Size = new System.Drawing.Size(75, 39);
+            this.cmdYRDec.TabIndex = 4;
+            this.cmdYRDec.Text = "Y-";
+            this.cmdYRDec.UseVisualStyleBackColor = true;
+            this.cmdYRDec.Click += new System.EventHandler(this.cmdYRDec_Click);
+            // 
+            // lblMainMessage
+            // 
+            this.lblMainMessage.Font = new System.Drawing.Font("Courier New", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMainMessage.Name = "lblMainMessage";
+            this.lblMainMessage.Size = new System.Drawing.Size(0, 52);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 55);
+            // 
+            // lblTime
+            // 
+            this.lblTime.Font = new System.Drawing.Font("Courier New", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTime.Name = "lblTime";
+            this.lblTime.Size = new System.Drawing.Size(0, 52);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -526,7 +793,6 @@
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Form1_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.Panel2.PerformLayout();
             this.splitContainer1.ResumeLayout(false);
@@ -546,6 +812,13 @@
             this.splitContainer2.Panel2.ResumeLayout(false);
             this.splitContainer2.Panel2.PerformLayout();
             this.splitContainer2.ResumeLayout(false);
+            this.contextMenuStrip1.ResumeLayout(false);
+            this.tabControl1.ResumeLayout(false);
+            this.tbMove.ResumeLayout(false);
+            this.tbMove.PerformLayout();
+            this.tbRotate.ResumeLayout(false);
+            this.tbScale.ResumeLayout(false);
+            this.tbScale.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -553,7 +826,6 @@
         #endregion
 
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.TextBox txtFileInfo;
         private OpenTK.GLControl glControl1;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.CheckBox chkWireframe;
@@ -594,6 +866,31 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button cmdReloadGCode;
         private System.Windows.Forms.Button cmdSaveGCode;
+        private System.Windows.Forms.TreeView treeScene;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem cmdRemoveObject;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tbMove;
+        private System.Windows.Forms.TabPage tbRotate;
+        private System.Windows.Forms.TextBox txtZTrans;
+        private System.Windows.Forms.Button cmdZInc;
+        private System.Windows.Forms.Button cmdZdec;
+        private System.Windows.Forms.TextBox txtYTrans;
+        private System.Windows.Forms.Button cmdYInc;
+        private System.Windows.Forms.Button cmdYDec;
+        private System.Windows.Forms.TextBox txtXTrans;
+        private System.Windows.Forms.Button cmdXInc;
+        private System.Windows.Forms.Button cmdXDec;
+        private System.Windows.Forms.Button cmdYRInc;
+        private System.Windows.Forms.Button cmdYRDec;
+        private System.Windows.Forms.Button cmdZRInc;
+        private System.Windows.Forms.Button cmdZRDec;
+        private System.Windows.Forms.Button cmdXRInc;
+        private System.Windows.Forms.Button cmdXRDec;
+        private System.Windows.Forms.TabPage tbScale;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripLabel lblMainMessage;
+        private System.Windows.Forms.ToolStripLabel lblTime;
     }
 }
 

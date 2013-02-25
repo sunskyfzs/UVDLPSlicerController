@@ -66,6 +66,64 @@ namespace UV_DLP_3D_Printer
         {
         
         }
+        public static String EstimateBuildTime(GCodeFile file) 
+        {
+            int bt = 0; // in milliseconds
+            bool done = false;
+            int gidx = 0;
+            while (!done) 
+            {
+                if (gidx >= file.Lines.Length)
+                {
+                    done = true;
+                    break;
+                }
+
+                String line = file.Lines[gidx++];
+                if (line.Length > 0)
+                {
+                    // if the line is a comment, parse it to see if we need to take action
+                    if (line.Contains("(<Delay> "))// get the delay
+                    {
+                        int delay = getvarfromline(line);
+                        bt += delay;
+                    }
+                }
+            }
+            TimeSpan ts = new TimeSpan();
+            ts = TimeSpan.FromMilliseconds(bt);
+            //String tms = ts.Hours.ToString() + ":" + ts.Minutes.ToString() + ":" + ts.Seconds.ToString();
+            return String.Format("{0:00}:{1:00}:{2:00}", ts.Hours, ts.Minutes, ts.Seconds);
+            //return tms;
+        }
+        public void ShowCalibration() 
+        {
+            if (m_calibimage == null)  // blank image is null, create it
+            {
+                m_calibimage = new Bitmap(m_sf.m_config.xres, m_sf.m_config.yres);
+                // fill it with black
+                using (Graphics gfx = Graphics.FromImage(m_blankimage))
+                using (SolidBrush brush = new SolidBrush(Color.Black))
+                {
+                    gfx.FillRectangle(brush, 0, 0, m_sf.m_config.xres, m_sf.m_config.yres);
+                }
+            }
+            PrintLayer(m_calibimage, SLICE_CALIBRATION, SLICE_CALIBRATION);                    
+        }
+        public void ShowBlank() 
+        {
+            if (m_blankimage == null)  // blank image is null, create it
+            {
+                m_blankimage = new Bitmap(m_sf.m_config.xres, m_sf.m_config.yres);
+                // fill it with black
+                using (Graphics gfx = Graphics.FromImage(m_blankimage))
+                using (SolidBrush brush = new SolidBrush(Color.Black))
+                {
+                    gfx.FillRectangle(brush, 0, 0, m_sf.m_config.xres, m_sf.m_config.yres);
+                }
+            }
+            PrintLayer(m_blankimage, SLICE_BLANK, SLICE_BLANK);            
+        }
         public bool IsPrinting { get { return m_printing; } }
 
         private void RaiseStatusEvent(ePrintStat status) 
@@ -102,7 +160,7 @@ namespace UV_DLP_3D_Printer
             m_running = true;
             m_runthread.Start();
         }
-        private int getvarfromline(String line) 
+        private static int getvarfromline(String line) 
         {
             try
             {

@@ -243,19 +243,19 @@ namespace UV_DLP_3D_Printer
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("(****Build and Slicing Parameters****)\r\n");
-            sb.Append("(dots per mm X           = " + dpmmX + " )\r\n");
-            sb.Append("(dots per mm Y           = " + dpmmY + " )\r\n");
-            sb.Append("(X resolution            = " + xres + " )\r\n");
-            sb.Append("(Y resolution            = " + yres + " )\r\n");
-            sb.Append("(X Pixel Offset          = " + XOffset + " )\r\n");
-            sb.Append("(Y Pixel Offset          = " + YOffset + " )\r\n");
-            sb.Append("(Layer thickness         = " + ZThick + " )\r\n");
-            sb.Append("(Layer Time              = " + layertime_ms + ")\r\n");
-            sb.Append("(First Layer Time        = " + firstlayertime_ms + ")\r\n");
-            sb.Append("(Blanking Layer Time     = " + blanktime_ms + ")\r\n");
-            sb.Append("(Platform Temp           = " + plat_temp + ")\r\n");
+            sb.Append("(pix per mm X           = " + String.Format("{0:0000}",dpmmX) + " px/mm )\r\n");
+            sb.Append("(pix per mm Y           = " + String.Format("{0:0000}",dpmmY) + " px/mm )\r\n");
+            sb.Append("(X resolution            = " + xres + " px )\r\n");
+            sb.Append("(Y resolution            = " + yres + " px )\r\n");
+            sb.Append("(X Pixel Offset          = " + XOffset + " px )\r\n");
+            sb.Append("(Y Pixel Offset          = " + YOffset + " px )\r\n");
+            sb.Append("(Layer thickness         = " + String.Format("{0:0000}",ZThick) + " ms )\r\n");
+            sb.Append("(Layer Time              = " + layertime_ms + " ms )\r\n");
+            sb.Append("(First Layer Time        = " + firstlayertime_ms + " ms )\r\n");
+            sb.Append("(Blanking Layer Time     = " + blanktime_ms + " ms )\r\n");
+            sb.Append("(Platform Temp           = " + plat_temp + " degrees celsius)\r\n");
             sb.Append("(Build Direction         = " + direction.ToString() + ")\r\n");
-            sb.Append("(Lift Distance           = " + liftdistance.ToString() + ")\r\n");            
+            sb.Append("(Lift Distance           = " + liftdistance.ToString() + " mm )\r\n");            
             return sb.ToString();
         }
 

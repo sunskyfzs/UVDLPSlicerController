@@ -1,0 +1,10 @@
+object move/scale/rotate
+multiple object support
+support generation
+	2d/3d
+SVG import
+multiple config support
+	machine / slice profiles
+
+support for powder based printers
+

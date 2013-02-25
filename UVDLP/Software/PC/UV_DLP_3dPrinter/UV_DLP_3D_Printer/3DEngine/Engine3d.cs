@@ -12,6 +12,7 @@ namespace Engine3D
 {
     public delegate void ModelAdded(Object3d model);
     public delegate void ModelRemoved(Object3d model);
+
     public class Engine3d
     {
         public Camera m_camera;

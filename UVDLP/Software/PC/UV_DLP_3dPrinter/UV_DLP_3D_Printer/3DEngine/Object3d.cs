@@ -28,6 +28,7 @@ namespace Engine3D
             m_lstpolys = new ArrayList();
             m_lstpoints = new ArrayList();
             m_name = "Model";
+            m_fullname = "Model";
             m_min = new Point3d();
             m_max = new Point3d();
             m_visible = true;
@@ -40,15 +41,38 @@ namespace Engine3D
             get { return m_visible; }
             set {  m_visible = value; }
         }
+        public void Rotate(float x, float y, float z) 
+        {
+            Point3d center = CalcCenter();
+            Translate((float)-center.x, (float)-center.y, (float)-center.z);
 
+            Matrix3D rotmat = new Matrix3D();
+            rotmat.Identity();
+            rotmat.Rotate(x, y, z);
+            for(int c = 0; c< m_lstpoints.Count;c++)            
+            {
+                Point3d p = (Point3d)m_lstpoints[c];
+                Point3d p1 = rotmat.Transform(p);
+                p.x = p1.x;
+                p.y = p1.y;
+                p.z = p1.z;
+
+
+            }
+            Translate((float)center.x, (float)center.y, (float)center.z);
+            FindMinMax();        
+        }
         public void Scale(float sf) 
         {
+            Point3d center = CalcCenter();
+            Translate((float)-center.x, (float)-center.y, 0);
             foreach (Point3d p in m_lstpoints) 
             {
                 p.x *= sf;
                 p.y *= sf;
                 p.z *= sf;
             }
+            Translate((float)center.x, (float)center.y, 0);
             FindMinMax();
         }
         public void Render() 
@@ -217,6 +241,21 @@ namespace Engine3D
             center.z /= m_lstpoints.Count;
 
             return center;
+        }
+
+        /*This cuntion adds the objects points and polygons to this one*/
+        public void Add(Object3d obj) 
+        {
+            foreach (Point3d p in obj.m_lstpoints)
+            {
+                m_lstpoints.Add(p);
+            }
+            foreach (Polygon ply in obj.m_lstpolys) 
+            {
+                m_lstpolys.Add(ply);
+            }
+            CalcCenter();
+            FindMinMax();
         }
 
         /*Move the model in object space */

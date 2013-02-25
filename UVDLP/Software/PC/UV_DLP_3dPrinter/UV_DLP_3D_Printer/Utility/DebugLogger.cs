@@ -50,6 +50,19 @@ namespace UV_DLP_3D_Printer
             }
             catch (Exception) { }
         }
+        public void LogInfo(string message) 
+        {
+        
+        }
+        public void LogWarning(string message)
+        {
+
+        }
+
+        public void LogError(string message)
+        {
+
+        }
 
     }
 }
