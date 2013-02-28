@@ -1,5 +1,11 @@
-02/25/2013
-	Added middle mouse button to control Up/Down view
+02/28/2013 Alpha 05 
+	Fixed view controls
+	Improved slicing speed by ~25%
+	Added DLP Calibration screen
+	Added in DLP Blank Screen
+	Added in Machine Profile Manager to support multiple machine configurations
+	Various GUI Improvements
+	Began writing new Slicing Code for other machine types
 
 02/25/2013 Alpha 04
 	Added in the ability to load multiple objects
@@ -23,3 +29,4 @@
 	Removed front-page connection serial port. Connection config is now done through connection screen.
 
 02/21/2013 Initial Alpha 01 release
+

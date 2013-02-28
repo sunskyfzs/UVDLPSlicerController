@@ -33,6 +33,7 @@ namespace UV_DLP_3D_Printer
         frmControl m_frmcontrol = new frmControl();
         frmSlice m_frmSlice = new frmSlice();
         frmGCodeRaw m_sendgcode = new frmGCodeRaw();
+        frmMachineProfileManager m_machineprofilemanager = new frmMachineProfileManager();
         eMOUSEMODE m_mousemode = eMOUSEMODE.eView;
 
         private bool lmdown, rmdown, mmdown;
@@ -41,6 +42,7 @@ namespace UV_DLP_3D_Printer
         float orbitxpos = -80;
         float orbitdist = -200;
         float yoffset = -10.0f;
+        float xoffset = 0.0f;
         public frmMain()
         {
             InitializeComponent();
@@ -52,16 +54,37 @@ namespace UV_DLP_3D_Printer
             UVDLPApp.Instance().m_buildmgr.PrintStatus += new delPrintStatus(PrintStatus);
             UVDLPApp.Instance().m_buildmgr.PrintLayer += new delPrinterLayer(PrintLayer);
             DebugLogger.Instance().LoggerStatusEvent += new LoggerStatusHandler(LoggerStatusEvent);
-            glControl1.MouseWheel += new MouseEventHandler(glControl1_MouseWheel);
             UVDLPApp.Instance().m_deviceinterface.StatusEvent += new DeviceInterface.DeviceInterfaceStatus(DeviceStatusEvent);
             SetConnectionStatus();
+            SetMouseModeChecks();
+            PopulateMachinesMenu();
+            SetupSceneTree();
         }
 
-        void glControl1_MouseWheel(object sender, MouseEventArgs e)
+        private void PopulateMachinesMenu() 
         {
-            //throw new NotImplementedException();
-            //DebugLogger.Instance().LogRecord(e.Delta.ToString());
+            //remove all items except the first 2
+            for (int c = machineToolStripMenuItem.DropDownItems.Count; c > 3; c--) 
+            {
+                machineToolStripMenuItem.DropDownItems.RemoveAt(c-1);
+            }
+            string[] filePaths = Directory.GetFiles(UVDLPApp.Instance().m_PathMachines, "*.machine");
+            string curprof = Path.GetFileNameWithoutExtension(UVDLPApp.Instance().m_printerinfo.m_filename);
+            //create a new menu item for all machine profiles
+            foreach (String profile in filePaths)
+            {
+                String pn = Path.GetFileNameWithoutExtension(profile);
+                ToolStripMenuItem it = new ToolStripMenuItem(pn);
+                it.Click += new EventHandler(mnuMachine_Click);
+                machineToolStripMenuItem.DropDownItems.Add(it);
+                if (curprof.Equals(pn)) // if this is the current profile, show as checked
+                {
+                    it.Checked = true;
+                }
+
+            }
         }
+
         private void SetTimeMessage(String message) 
         {
             lblTime.Text = message;
@@ -104,8 +127,6 @@ namespace UV_DLP_3D_Printer
             {
                 cmdConnect.Enabled = false;
                 cmdDisconnect.Enabled = true;
-                //cmdRefresh.Enabled = false;
-                //cmbSerial.Enabled = false;
                 cmdControl.Enabled = true;
                 cmdBuild.Enabled = true;
                 cmdStop.Enabled = true;
@@ -114,8 +135,6 @@ namespace UV_DLP_3D_Printer
             {
                 cmdConnect.Enabled = true;
                 cmdDisconnect.Enabled = false;
-                //cmdRefresh.Enabled = true;
-                //cmbSerial.Enabled = true;
                 cmdControl.Enabled = false;
                 cmdBuild.Enabled = false;
                 cmdStop.Enabled = false;
@@ -134,10 +153,6 @@ namespace UV_DLP_3D_Printer
                 obj.FindMinMax();
                 TreeNode objnode = new TreeNode(obj.Name);
                 objnode.Tag = obj;
-                if (obj == UVDLPApp.Instance().m_selectedobject)  // expand this node
-                {
-                    objnode.Expand();
-                }
                 scenenode.Nodes.Add(objnode);
                 //String minmax = "Nu
                 String Numpoints = "Num Points = " + obj.NumPoints.ToString();
@@ -151,8 +166,15 @@ namespace UV_DLP_3D_Printer
                 ys = obj.m_max.y - obj.m_min.y;
                 zs = obj.m_max.z - obj.m_min.z;                
                 objnode.Nodes.Add("Size = (" + String.Format("{0:0.00}", xs) + "," + String.Format("{0:0.00}", ys) + "," + String.Format("{0:0.00}", zs) + ")");
+                objnode.Nodes.Add("Wireframe = " + obj.m_wireframe.ToString());
+                if (obj == UVDLPApp.Instance().m_selectedobject)  // expand this node
+                {
+                    objnode.Expand();
+                    treeScene.SelectedNode = objnode;
+                }
 
             }
+            scenenode.Expand();
              
         }
         /*
@@ -449,7 +471,7 @@ namespace UV_DLP_3D_Printer
           GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
           GL.LoadIdentity();
 
-          GL.Translate(0, yoffset, orbitdist);
+          GL.Translate(xoffset, yoffset, orbitdist);
           GL.Rotate(orbitypos, 0, 1, 0);
           GL.Rotate(orbitxpos, 1, 0, 0);
 
@@ -465,13 +487,22 @@ namespace UV_DLP_3D_Printer
         {
             loaded = true;
 
-            //GL.ClearColor(Color4.SkyBlue);
             GL.ClearColor(Color.FromArgb(20, Color.LightBlue));
             GL.Enable(EnableCap.Blend);
-            //GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcColor);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
-
+            glControl1.MouseWheel += new MouseEventHandler(glControl1_MouseWheel);
             SetupViewport();
+        }
+
+        void glControl1_MouseWheel(object sender, MouseEventArgs e)
+        {
+            switch (m_mousemode) 
+            {
+                case eMOUSEMODE.eView:
+                    orbitdist += e.Delta/10;
+                    break;
+            }
+            DisplayFunc();
         }
 
         private void glControl1_MouseDown(object sender, MouseEventArgs e)
@@ -523,31 +554,68 @@ namespace UV_DLP_3D_Printer
                 mdx = e.X;
                 mdy = e.Y;
             }
-            if (mmdown) 
-            {
-                // view goes up and down along the y
-                dx /= 2;
-                dy /= 2;
-                yoffset += (float) dy;
-                glControl1.Invalidate();
-            }
-            if (lmdown)
-            {
-                dx /= 2;
-                dy /= 2;
-                orbitypos += (float)dx;
-                orbitxpos += (float)dy;
+            dx /= 2;
+            dy /= 2;
 
-                glControl1.Invalidate();
-            }
-            if (rmdown)
+            switch (m_mousemode) 
             {
-                dx /= 2;
-                dy /= 2;
-                orbitdist += (float)dy;
-                glControl1.Invalidate();
+                case eMOUSEMODE.eView:
+                    if (lmdown)
+                    {
+                        orbitypos += (float)dx;
+                        orbitxpos += (float)dy;
+                    }else if (mmdown)
+                    {
+                        orbitdist += (float)dy;                        
+                    }
+                    else if (rmdown)
+                    {
+                        yoffset += (float)dy/2;
+                        xoffset += (float)dx/2;
+                    }
+                    break;
+                case eMOUSEMODE.eModelMove:
+                    dx /= 3;
+                    dy /= 3;
+                    Object3d obj = UVDLPApp.Instance().m_selectedobject;
+                    if (obj != null) 
+                    {
+                        obj.Translate((float)dx, (float)-dy, 0);                     
+                    }
+                    break;
+                case eMOUSEMODE.eModelScale:
+                    dx /= 20;
+                    dy /= 6;
+                    dx += 1.0;
+                    Object3d obj3 = UVDLPApp.Instance().m_selectedobject;                   
+                    if (obj3 != null && dx != 0.0)
+                    {
+                        obj3.Scale((float)dx);
+                    }
+                    break;
+                case eMOUSEMODE.eModelRotate:
+                    dx /= 3;
+                    dy /= 3;
+                    Object3d obj2 = UVDLPApp.Instance().m_selectedobject;
+                    if (obj2 != null) 
+                    {
+                        if (lmdown)
+                        {
+                            obj2.Rotate((float)dx * 0.0174532925f, 0, 0);
+                        }
+                        else if (mmdown)
+                        {
+                            obj2.Rotate(0,(float)dx * 0.0174532925f, 0);
+                        }
+                        else if (rmdown)
+                        {
+                            obj2.Rotate(0,0,(float)dx * 0.0174532925f);
+                        }
 
+                    }
+                    break;
             }
+            DisplayFunc();
         }
 
         private void glControl1_MouseLeave(object sender, EventArgs e)
@@ -607,54 +675,8 @@ namespace UV_DLP_3D_Printer
             }
         }
 
-        private bool ShowDLPScreen() 
-        {
-            try
-            {
-                Screen dlpscreen = null;
-                foreach (Screen s in Screen.AllScreens) 
-                {
-                    if (s.DeviceName.Equals(UVDLPApp.Instance().m_printerinfo.m_monitorid)) 
-                    {
-                        dlpscreen = s;
-                        break;
-                    }
-                }
-                if (dlpscreen == null)
-                    return false;
-                if (m_frmdlp.IsDisposed) 
-                {
-                    m_frmdlp = new frmDLP();//recreate
-                }
-                m_frmdlp.Show();
-                m_frmdlp.SetDesktopBounds(dlpscreen.Bounds.X, dlpscreen.Bounds.Y, dlpscreen.Bounds.Width, dlpscreen.Bounds.Height);
-                m_frmdlp.WindowState = FormWindowState.Maximized;
-                m_frmdlp.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-                return true;
-            }
-            catch (Exception ex)
-            {
-                DebugLogger.Instance().LogRecord(ex.Message);
-                return false;
-            }                  
-        }
-        /* // this code shows the secondary DLP screen 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                Screen s = Screen.AllScreens[1];
-                m_frmdlp.Show();
-                m_frmdlp.SetDesktopBounds(s.Bounds.X, s.Bounds.Y, s.Bounds.Width, s.Bounds.Height);
-                m_frmdlp.WindowState = FormWindowState.Maximized;
-                m_frmdlp.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            }
-            catch (Exception) 
-            {
-            
-            }          
-        }
-        */
+
+
         private void cmdSliceOptions_Click(object sender, EventArgs e)
         {
             m_frmsliceopt.ShowDialog();
@@ -677,7 +699,7 @@ namespace UV_DLP_3D_Printer
 
         private void machinePropertiesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frmMachineConfig mf = new frmMachineConfig();
+            frmMachineConfig mf = new frmMachineConfig(ref UVDLPApp.Instance().m_printerinfo);
             mf.ShowDialog();
             UVDLPApp.Instance().Engine3D.RemoveAllLines();
             UVDLPApp.Instance().Engine3D.AddGrid();
@@ -699,8 +721,6 @@ namespace UV_DLP_3D_Printer
             {
                 if (!UVDLPApp.Instance().m_deviceinterface.Connected) // 
                 {
-                    //maybe get the com port if it's different?
-                    //UVDLPApp.Instance().m_printerinfo.m_driverconfig.m_connection.comname = com;
                     UVDLPApp.Instance().m_deviceinterface.Configure(UVDLPApp.Instance().m_printerinfo.m_driverconfig.m_connection);
                     String com = UVDLPApp.Instance().m_printerinfo.m_driverconfig.m_connection.comname;
                     DebugLogger.Instance().LogRecord("Connecting to Printer on " + com + " using " + UVDLPApp.Instance().m_printerinfo.m_driverconfig.m_drivertype.ToString());
@@ -757,7 +777,7 @@ namespace UV_DLP_3D_Printer
             }
             m_sendgcode.Show();
         }
-
+        #region Save/Load GCode
         private void cmdSaveGCode_Click(object sender, EventArgs e)
         {
             try
@@ -784,7 +804,7 @@ namespace UV_DLP_3D_Printer
                 DebugLogger.Instance().LogRecord(ex.Message);
             }
         }
-
+        #endregion Save/ Load GCode
         /*
          This function does 2 things,
          * when a node is click that is an object node, it sets
@@ -798,7 +818,7 @@ namespace UV_DLP_3D_Printer
                 UVDLPApp.Instance().m_selectedobject = (Object3d)e.Node.Tag;
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)  // we right clicked a menu item, check and see if it has a tag
                 {
-                    contextMenuStrip1.Show(e.Location);
+                    contextMenuStrip1.Show(treeScene,e.Node.Bounds.Left, e.Node.Bounds.Top);
                 }            
             }
         }
@@ -921,6 +941,7 @@ namespace UV_DLP_3D_Printer
             }
         }
         #endregion Move functions
+
         #region Rotate functions
         private void cmdXRDec_Click(object sender, EventArgs e)
         {
@@ -1019,14 +1040,149 @@ namespace UV_DLP_3D_Printer
             }
         }
         #endregion
+
+        #region Mouse Move/Scale/Rotate/View
         private void mnuView_Click(object sender, EventArgs e)
         {
             m_mousemode = eMOUSEMODE.eView;
+            SetMouseModeChecks();
         }
 
         private void mnuMove_Click(object sender, EventArgs e)
         {
             m_mousemode = eMOUSEMODE.eModelMove;
+            SetMouseModeChecks();
         }
+
+        private void mnuRotate_Click(object sender, EventArgs e)
+        {
+            m_mousemode = eMOUSEMODE.eModelRotate;
+            SetMouseModeChecks();
+        }
+
+        private void mnuScale_Click(object sender, EventArgs e)
+        {
+            m_mousemode = eMOUSEMODE.eModelScale;
+            SetMouseModeChecks();
+        }
+        private void SetMouseModeChecks()
+        {
+            mnuMove.Checked = false;
+            mnuView.Checked = false;
+            mnuScale.Checked = false;
+            mnuRotate.Checked = false;
+            switch (m_mousemode)
+            {
+                case eMOUSEMODE.eModelMove:
+                    mnuMove.Checked = true;
+                    break;
+                case eMOUSEMODE.eModelRotate:
+                    mnuRotate.Checked = true;
+                    break;
+                case eMOUSEMODE.eModelScale:
+                    mnuScale.Checked = true;
+                    break;
+                case eMOUSEMODE.eView:
+                    mnuView.Checked = true;
+                    break;
+            }
+
+        }
+        #endregion 
+
+        private void manageMachinesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (m_machineprofilemanager.IsDisposed) 
+            {
+                m_machineprofilemanager = new frmMachineProfileManager();
+            }
+            m_machineprofilemanager.ShowDialog();
+            // update just in case.
+            UVDLPApp.Instance().Engine3D.RemoveAllLines();
+            UVDLPApp.Instance().Engine3D.AddGrid();
+            UVDLPApp.Instance().Engine3D.AddPlatCube();
+            DisplayFunc();
+            PopulateMachinesMenu();
+        }
+
+        // one of the populated machines in the machine menu was clicked
+        private void mnuMachine_Click(object sender, EventArgs e)
+        {
+            String newprof = sender.ToString();
+
+            string[] filePaths = Directory.GetFiles(UVDLPApp.Instance().m_PathMachines, "*.machine");
+            int idx = 0;
+            foreach (String profile in filePaths)
+            {
+                String pn = Path.GetFileNameWithoutExtension(profile);
+                if (pn.Equals(newprof)) 
+                {
+                    UVDLPApp.Instance().LoadMachineConfig(filePaths[idx]);
+                    PopulateMachinesMenu();
+                    break;
+                }
+                idx++;
+            }
+        }
+        #region DLP Screen Controls
+        private void showBlankToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowDLPScreen();
+            Screen dlpscreen = GetDLPScreen();
+            UVDLPApp.Instance().m_buildmgr.ShowBlank(dlpscreen.Bounds.Width, dlpscreen.Bounds.Height);
+        }
+
+        private void showCalibrationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowDLPScreen();
+            Screen dlpscreen = GetDLPScreen();
+            UVDLPApp.Instance().m_buildmgr.ShowCalibration(dlpscreen.Bounds.Width,dlpscreen.Bounds.Height,UVDLPApp.Instance().m_buildparms);
+        }
+
+        private void hideToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_frmdlp.Hide();    
+        }
+
+        private Screen GetDLPScreen() 
+        {
+            Screen dlpscreen = null;
+            foreach (Screen s in Screen.AllScreens)
+            {
+                if (s.DeviceName.Equals(UVDLPApp.Instance().m_printerinfo.m_monitorid))
+                {
+                    dlpscreen = s;
+                    break;
+                }
+            }
+            if (dlpscreen == null)
+            {
+                dlpscreen = Screen.AllScreens[0]; // default to the first if we can't find it
+                DebugLogger.Instance().LogRecord("Can't find screen " + UVDLPApp.Instance().m_printerinfo.m_monitorid);
+            }
+            return dlpscreen;
+        }
+        private bool ShowDLPScreen()
+        {
+            try
+            {
+                Screen dlpscreen = GetDLPScreen();
+                if (m_frmdlp.IsDisposed)
+                {
+                    m_frmdlp = new frmDLP();//recreate
+                }
+                m_frmdlp.Show();
+                m_frmdlp.SetDesktopBounds(dlpscreen.Bounds.X, dlpscreen.Bounds.Y, dlpscreen.Bounds.Width, dlpscreen.Bounds.Height);
+                m_frmdlp.WindowState = FormWindowState.Maximized;
+                m_frmdlp.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                DebugLogger.Instance().LogRecord(ex.Message);
+                return false;
+            }
+        }
+        #endregion DLP screen controls
     }
 }

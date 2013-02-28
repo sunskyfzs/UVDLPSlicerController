@@ -106,3 +106,26 @@ GCode Generation:
 
 				Another approach is not to generate image or vector slices at all, and only generate them at run-time. The model itself could be 
 				the only resource needed beyond the slicing and build parameters.
+
+
+Slicing re-write notes:
+slicing is a process
+this process consists of steps
+each step is done by a slicing module
+modules can do things like:
+raft
+bottom layer
+support generators
+image pre- and post processors
+image exporter
+svg exporter
+gcode generator
+
+The slicer is what holds the list of these actions
+and executes (calls) them in the correct order
+each module can save and load it's own parameters
+the slicer holds all the intermediate data that each module can operate upon.
+
+This set of configured slicing parameters can be saved as a slicing / building profile
+
+I think this approach will later allow other slicing types, such as for my makerbot or reprap

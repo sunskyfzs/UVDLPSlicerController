@@ -76,7 +76,7 @@ namespace UV_DLP_3D_Printer.GUI
                     sp.UpdateFrom(UVDLPApp.Instance().m_printerinfo);
                     UVDLPApp.Instance().CalcScene();
                     int numslices = UVDLPApp.Instance().m_slicer.GetNumberOfSlices(sp, UVDLPApp.Instance().Scene);
-                    UVDLPApp.Instance().m_slicefile = UVDLPApp.Instance().m_slicer.Slice(sp, UVDLPApp.Instance().Scene, ".");                
+                    UVDLPApp.Instance().m_slicefile = UVDLPApp.Instance().m_slicer.Slice(sp, UVDLPApp.Instance().Scene);                
 
                     //int numslices = UVDLPApp.Instance().m_slicer.GetNumberOfSlices(sp, UVDLPApp.Instance().m_selectedobject);
                     //UVDLPApp.Instance().m_slicefile = UVDLPApp.Instance().m_slicer.Slice(sp, UVDLPApp.Instance().m_selectedobject, ".");                

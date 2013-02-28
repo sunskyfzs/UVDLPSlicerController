@@ -16,6 +16,13 @@ namespace Engine3D
     {
         public ArrayList m_points; // world coordinate points
         public Color m_color;
+        // precached
+        double minx, maxx;
+        double miny, maxy;
+        double minz, maxz;
+        Point3d pmin, pmax;
+
+        bool cached = false;
         public PolyLine3d(Point3d p1, Point3d p2, Color clr) 
         {
             m_points = new ArrayList();
@@ -28,11 +35,13 @@ namespace Engine3D
             m_points = new ArrayList();
             m_color = Color.Blue;
         }
+        /*
+         This function assumes that the polyline consists of 2 points
+         */
         public Point3d IntersectZ(double zcur)
         {
             try
-            {
-                Point3d p3d = new Point3d();
+            {                
                 // now, using the 3d line equation, calculate the x/y intersection of the z plane
                 // the line is in the 0 and 1 index (start/end)
                 Point3d p1 = (Point3d)m_points[0];
@@ -62,51 +71,41 @@ namespace Engine3D
                     if (p2.z == zcur && p1.z > zcur) 
                         return p2;
                 }
-                             
 
-                                
+
+                Point3d p3d = new Point3d();                                
                 // if 1 is above and 1 is below, calculate it.
-                if ((p1.z > zcur && p2.z < zcur) || (p1.z < zcur && p2.z > zcur))
+            //    if ((p1.z > zcur && p2.z < zcur) || (p1.z < zcur && p2.z > zcur)) // i think this check is unessariy at this point
+                //{
+                    //should pre-cache this too
+                if (cached == false)
                 {
-                    double minx, maxx;
-                    double miny, maxy;
-                    double minz, maxz;
                     minx = (double)Math.Min(p1.x, p2.x);
                     maxx = (double)Math.Max(p1.x, p2.x);
                     miny = (double)Math.Min(p1.y, p2.y);
                     maxy = (double)Math.Max(p1.y, p2.y);
                     minz = (double)Math.Min(p1.z, p2.z);
                     maxz = (double)Math.Max(p1.z, p2.z);
-                    double zrange = maxz - minz;// the range of the z coord
-                    double scale = (double)((zcur - minz) / zrange);
-
-                    if (scale > 1.0f || scale < 0.0f) 
-                    {
-                        return null;
-                    }
-                    p3d.z = zcur; // set to the current z
-                    // p3d.x = LERP(maxx, minx, scale);
-                    // p3d.y = LERP(maxy, miny , scale);
-                    Point3d pmin, pmax;
                     if (p1.z < p2.z) // find the point with the min z
                     {
                         pmin = p1;
                         pmax = p2;
                     }
-                    else 
+                    else
                     {
                         pmin = p2;
                         pmax = p1;
-                    
                     }
-                     p3d.x = LERP(pmin.x, pmax.x, scale); // do the intersection
-                     p3d.y = LERP(pmin.y, pmax.y , scale);
-                }
-                else 
-                {
-                    return null; // unhandled case?
-                }
 
+                    cached = true;
+                }
+                double zrange = maxz - minz;// the range of the z coord
+                double scale = (double)((zcur - minz) / zrange);
+                p3d.z = zcur; // set to the current z
+                //p3d.x = LERP(pmin.x, pmax.x, scale); // do the intersection
+                //p3d.y = LERP(pmin.y, pmax.y, scale);
+                p3d.x =  (pmax.x - pmin.x) * scale + pmin.x;
+                p3d.y =  (pmax.y - pmin.y) * scale + pmin.y;
 
                 return p3d;
             }

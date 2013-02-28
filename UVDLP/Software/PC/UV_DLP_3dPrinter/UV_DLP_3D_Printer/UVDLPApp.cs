@@ -91,6 +91,7 @@ namespace UV_DLP_3D_Printer
                 AppEvent(ev, message);
             }
         }
+
         public void CalcScene() 
         {
             m_sceneobject = new Object3d();
@@ -266,7 +267,20 @@ namespace UV_DLP_3D_Printer
                     return Platform.Windows;
             }
         }
-
+        /*
+         This function loads the machine profile and makes it current
+         */
+        public bool LoadMachineConfig(string filename) 
+        {
+            bool ret = m_printerinfo.Load(filename);
+            if (ret) 
+            {
+                m_appconfig.m_curmachineeprofilename = filename; // set the app config name
+                //save the app config
+                m_appconfig.Save(m_appconfigname);// this name doesn't change
+            }
+            return ret;
+        }
         public void SaveCurrentMachineConfig() 
         {
             try

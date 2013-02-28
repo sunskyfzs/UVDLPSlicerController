@@ -41,6 +41,20 @@ namespace Engine3D
             get { return m_visible; }
             set {  m_visible = value; }
         }
+        public void CalcMinMaxes() 
+        {
+            foreach (Polygon p in m_lstpolys) 
+            {
+                p.CalcMinMax();
+            }
+        }
+        public void ClearCached() 
+        {
+            foreach (Polygon p in m_lstpolys)
+            {
+                p.ClearCached();
+            }        
+        }
         public void Rotate(float x, float y, float z) 
         {
             Point3d center = CalcCenter();

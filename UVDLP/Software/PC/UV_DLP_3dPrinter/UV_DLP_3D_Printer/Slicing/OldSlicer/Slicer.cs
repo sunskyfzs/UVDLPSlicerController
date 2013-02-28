@@ -35,6 +35,7 @@ namespace UV_DLP_3D_Printer
         public void CancelSlicing() 
         {
             m_cancel = true;
+            isslicing = false;
         }
         public void RaiseSliceEvent(eSliceEvent ev, int curlayer, int totallayers)
         {
@@ -53,6 +54,7 @@ namespace UV_DLP_3D_Printer
             }
             catch (Exception) 
             {
+                m_cancel = true;
                 return 0;
             }
         }
@@ -60,7 +62,7 @@ namespace UV_DLP_3D_Printer
         // this function takes the object, the slicing parameters,
         // and the output directory. it generates the object slices
         // and saves them in the directory
-        public SliceFile Slice(SliceBuildConfig sp, Object3d obj, String outdir) 
+        public SliceFile Slice(SliceBuildConfig sp, Object3d obj) 
         {
                 m_obj = obj;
                 m_cancel = false;
@@ -77,8 +79,6 @@ namespace UV_DLP_3D_Printer
             try
             {
 
-               // m_slices = new ArrayList();
-                //iterate 
                 //determine the number of slices
                 m_obj.FindMinMax();
                 int numslices = (int)((m_obj.m_max.z - m_obj.m_min.z) / m_sf.m_config.ZThick);
@@ -87,6 +87,8 @@ namespace UV_DLP_3D_Printer
                 RaiseSliceEvent(eSliceEvent.eSliceStarted, 0, numslices);
                 DebugLogger.Instance().LogRecord("Slicing started");
                 int c = 0;
+                m_obj.CalcMinMaxes();
+                m_obj.ClearCached();
                 for (c = 0; c < numslices; c++)
                 {
                     if (m_cancel) 
@@ -96,14 +98,19 @@ namespace UV_DLP_3D_Printer
                         RaiseSliceEvent(eSliceEvent.eSliceCancelled, c, numslices);
                         return;
                     }
-                    //get a list of polygons at this slice z height that intersect
+                    //get a list of polygons at this slice z height that potentially intersect
                     ArrayList lstply = GetZPolys(m_obj, curz);
-                    //iterate through all the polygons and generat 2d line segments at this z level
+                    //iterate through all the polygons and generate x/y line segments at this 3d z level
                     ArrayList lstintersections = GetZIntersections(lstply, curz);
+                    // move the slice for the next layer
                     curz += m_sf.m_config.ZThick;
+                    //create a new slice
                     Slice sl = new Slice();
+                   // Set the list of intersections 
                     sl.m_segments = lstintersections;
+                    // add the slice to slicefile
                     m_sf.m_slices.Add(sl);
+                    //raise an event to say we've finished a slice
                     RaiseSliceEvent(eSliceEvent.eLayerSliced, c, numslices);
                 }
                 RaiseSliceEvent(eSliceEvent.eSliceCompleted, c, numslices);
@@ -114,6 +121,8 @@ namespace UV_DLP_3D_Printer
             catch (Exception ex)
             {
                 DebugLogger.Instance().LogRecord(ex.Message);
+                //RaiseSliceEvent(eSliceEvent.eSliceCancelled,0,0);
+                m_cancel = true;
             }        
         }
 
@@ -153,8 +162,8 @@ namespace UV_DLP_3D_Printer
             foreach(Polygon p in obj.m_lstpolys)
             {
                 //check and see if current z level is between any of the polygons z coords
-                MinMax mm = p.CalcMinMax();
-                if (mm.InRange(zlev)) 
+                //MinMax mm = p.CalcMinMax();
+                if (p.m_minmax.InRange(zlev)) 
                 {
                     lst.Add(p);
                 }

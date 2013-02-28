@@ -37,6 +37,7 @@ namespace UV_DLP_3D_Printer.Configs
                 xr.ReadStartElement("ComPortSettings");
                     comname = xr.ReadElementString("PortName");
                     speed = int.Parse(xr.ReadElementString("Speed"));
+                    databits = int.Parse(xr.ReadElementString("Databits"));
                     parity = (Parity)Enum.Parse(typeof(Parity), xr.ReadElementString("Parity"));
                     stopbits = (StopBits)Enum.Parse(typeof(StopBits), xr.ReadElementString("Stopbits"));
                     handshake = (Handshake)Enum.Parse(typeof(Handshake), xr.ReadElementString("Handshake"));
@@ -58,7 +59,7 @@ namespace UV_DLP_3D_Printer.Configs
                 xw.WriteStartElement("ComPortSettings");
                     xw.WriteElementString("PortName", comname);
                     xw.WriteElementString("Speed", speed.ToString());
-                    xw.WriteElementString("DataBits", databits.ToString());
+                    xw.WriteElementString("Databits", databits.ToString());
                     xw.WriteElementString("Parity", parity.ToString());
                     xw.WriteElementString("Stopbits", stopbits.ToString());
                     xw.WriteElementString("Handshake", handshake.ToString());

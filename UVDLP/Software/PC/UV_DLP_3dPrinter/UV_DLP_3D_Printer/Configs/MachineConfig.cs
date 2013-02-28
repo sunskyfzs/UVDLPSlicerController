@@ -28,12 +28,18 @@ namespace UV_DLP_3D_Printer
         public double m_ZMaxFeedrate;// in mm/min 
         public string m_monitorid; // which monitor we're using
 
+
+        public String m_description; // a description
+        public String m_name; // the profile name
+        public String m_filename;// the filename of this profile. (not saved)
+
         public DeviceDriverConfig m_driverconfig;
 
         public bool Load(string filename) 
         {
             try
             {
+                m_filename = filename;
                 bool retval = false;
                 XmlReader xr = XmlReader.Create(filename);
                 xr.ReadStartElement("MachineConfig");
@@ -72,6 +78,7 @@ namespace UV_DLP_3D_Printer
             {
                 bool retval = false;
                 XmlWriter xw = XmlWriter.Create(filename);
+                m_filename = filename;
                 xw.WriteStartDocument();
                     xw.WriteStartElement("MachineConfig");
                         xw.WriteElementString("FileVersion", FILE_VERSION.ToString());

@@ -96,30 +96,45 @@ namespace UV_DLP_3D_Printer
             return String.Format("{0:00}:{1:00}:{2:00}", ts.Hours, ts.Minutes, ts.Seconds);
             //return tms;
         }
-        public void ShowCalibration() 
+        public void ShowCalibration(int xres, int yres, SliceBuildConfig sc) 
         {
-            if (m_calibimage == null)  // blank image is null, create it
+           // if (m_calibimage == null)  // blank image is null, create it
             {
-                m_calibimage = new Bitmap(m_sf.m_config.xres, m_sf.m_config.yres);
+                m_calibimage = new Bitmap(xres,yres);
                 // fill it with black
-                using (Graphics gfx = Graphics.FromImage(m_blankimage))
+                using (Graphics gfx = Graphics.FromImage(m_calibimage))
                 using (SolidBrush brush = new SolidBrush(Color.Black))
                 {
-                    gfx.FillRectangle(brush, 0, 0, m_sf.m_config.xres, m_sf.m_config.yres);
+                    gfx.FillRectangle(brush, 0, 0, xres, yres);
+                    int xpos = 0, ypos = 0;
+                    Pen pen = new Pen(new SolidBrush(Color.Red));
+                    for(xpos = 0; xpos < xres; xpos += (int)(sc.dpmmX*10.0))
+                    {
+                        Point p1 = new Point(xpos,0);
+                        Point p2 = new Point(xpos,yres);
+                        gfx.DrawLine(pen, p1, p2);
+                    }
+                    for (ypos = 0; ypos < yres; ypos += (int)(sc.dpmmY*10.0))
+                    {
+                        Point p1 = new Point(0, ypos);
+                        Point p2 = new Point(xres, ypos);
+                        gfx.DrawLine(pen, p1, p2);
+                    }
+
                 }
             }
             PrintLayer(m_calibimage, SLICE_CALIBRATION, SLICE_CALIBRATION);                    
         }
-        public void ShowBlank() 
+        public void ShowBlank(int xres, int yres) 
         {
             if (m_blankimage == null)  // blank image is null, create it
             {
-                m_blankimage = new Bitmap(m_sf.m_config.xres, m_sf.m_config.yres);
+                m_blankimage = new Bitmap(xres,yres);
                 // fill it with black
                 using (Graphics gfx = Graphics.FromImage(m_blankimage))
                 using (SolidBrush brush = new SolidBrush(Color.Black))
                 {
-                    gfx.FillRectangle(brush, 0, 0, m_sf.m_config.xres, m_sf.m_config.yres);
+                    gfx.FillRectangle(brush, 0, 0, xres,yres);
                 }
             }
             PrintLayer(m_blankimage, SLICE_BLANK, SLICE_BLANK);            

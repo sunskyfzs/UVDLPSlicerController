@@ -12,9 +12,12 @@ namespace UV_DLP_3D_Printer
     public partial class frmMachineConfig : Form
     {
         private eDriverType m_saved;
-        public frmMachineConfig()
+        private MachineConfig m_config = null;
+
+        public frmMachineConfig(ref MachineConfig config)
         {
             InitializeComponent();
+            m_config = config;
             FillMonitors(); // list out the system monitors
         }
 
@@ -26,8 +29,8 @@ namespace UV_DLP_3D_Printer
                 {
                     lstDrivers.Items.Add(s);
                 }
-                lstDrivers.SelectedItem = UVDLPApp.Instance().m_printerinfo.m_driverconfig.m_drivertype.ToString();
-                m_saved = UVDLPApp.Instance().m_printerinfo.m_driverconfig.m_drivertype;
+                lstDrivers.SelectedItem = m_config.m_driverconfig.m_drivertype.ToString();
+                m_saved = m_config.m_driverconfig.m_drivertype;
                 //() check connection
                 if (UVDLPApp.Instance().m_deviceinterface.Connected)
                 {
@@ -40,17 +43,17 @@ namespace UV_DLP_3D_Printer
 
 
                 //list the drivers
-                txtPlatWidth.Text = "" + UVDLPApp.Instance().m_printerinfo.m_PlatXSize;
-                txtPlatHeight.Text = "" + UVDLPApp.Instance().m_printerinfo.m_PlatYSize;
-                txtPlatTall.Text = UVDLPApp.Instance().m_printerinfo.m_PlatZSize.ToString();
-                projwidth.Text = "" + UVDLPApp.Instance().m_printerinfo.XRes;
-                projheight.Text = "" + UVDLPApp.Instance().m_printerinfo.YRes;
-                txtZFeed.Text = UVDLPApp.Instance().m_printerinfo.m_ZMaxFeedrate.ToString();
+                txtPlatWidth.Text = "" + m_config.m_PlatXSize;
+                txtPlatHeight.Text = "" + m_config.m_PlatYSize;
+                txtPlatTall.Text = m_config.m_PlatZSize.ToString();
+                projwidth.Text = "" + m_config.XRes;
+                projheight.Text = "" + m_config.YRes;
+                txtZFeed.Text = m_config.m_ZMaxFeedrate.ToString();
                 //select the current monitor
                 int idx = 0;
                 foreach (String s in lstMonitors.Items) 
                 {
-                    if (s.Equals(UVDLPApp.Instance().m_printerinfo.m_monitorid)) 
+                    if (s.Equals(m_config.m_monitorid)) 
                     {
                         lstMonitors.SelectedIndex = idx;
                     }
@@ -68,22 +71,22 @@ namespace UV_DLP_3D_Printer
             {
                 if (lstDrivers.SelectedIndex != -1) 
                 {
-                    UVDLPApp.Instance().m_printerinfo.m_driverconfig.m_drivertype = (eDriverType)Enum.Parse(typeof(eDriverType), lstDrivers.SelectedItem.ToString());
+                    m_config.m_driverconfig.m_drivertype = (eDriverType)Enum.Parse(typeof(eDriverType), lstDrivers.SelectedItem.ToString());
                 }
-                if (m_saved != UVDLPApp.Instance().m_printerinfo.m_driverconfig.m_drivertype) 
+                if (m_saved != m_config.m_driverconfig.m_drivertype) 
                 {
                     UVDLPApp.Instance().SetupDriver();
                 }
 
-                UVDLPApp.Instance().m_printerinfo.m_PlatXSize = double.Parse(txtPlatWidth.Text);
-                UVDLPApp.Instance().m_printerinfo.m_PlatYSize = double.Parse(txtPlatHeight.Text);
-                UVDLPApp.Instance().m_printerinfo.m_PlatZSize = double.Parse(txtPlatTall.Text);
-                UVDLPApp.Instance().m_printerinfo.m_XDLPRes = double.Parse(projwidth.Text);
-                UVDLPApp.Instance().m_printerinfo.m_YDLPRes = double.Parse(projheight.Text);
-                UVDLPApp.Instance().m_printerinfo.m_ZMaxFeedrate = double.Parse(txtZFeed.Text);
+                m_config.m_PlatXSize = double.Parse(txtPlatWidth.Text);
+                m_config.m_PlatYSize = double.Parse(txtPlatHeight.Text);
+                m_config.m_PlatZSize = double.Parse(txtPlatTall.Text);
+                m_config.m_XDLPRes = double.Parse(projwidth.Text);
+                m_config.m_YDLPRes = double.Parse(projheight.Text);
+                m_config.m_ZMaxFeedrate = double.Parse(txtZFeed.Text);
                 if (lstMonitors.SelectedIndex != -1)
                 {
-                    UVDLPApp.Instance().m_printerinfo.m_monitorid = Screen.AllScreens[lstMonitors.SelectedIndex].DeviceName;// lstMonitors.Items[lstMonitors.SelectedIndex].ToString();
+                    m_config.m_monitorid = Screen.AllScreens[lstMonitors.SelectedIndex].DeviceName;// lstMonitors.Items[lstMonitors.SelectedIndex].ToString();
                 }
                 return true;
             }
@@ -99,7 +102,8 @@ namespace UV_DLP_3D_Printer
         {
             if (GetData())
             {
-                UVDLPApp.Instance().SaveCurrentMachineConfig();
+                //UVDLPApp.Instance().SaveCurrentMachineConfig();
+                m_config.Save(m_config.m_filename);
                 Close();
             }
         }

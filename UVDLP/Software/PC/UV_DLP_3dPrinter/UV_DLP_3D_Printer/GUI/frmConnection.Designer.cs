@@ -71,6 +71,7 @@
             // 
             this.cmbSpeed.FormattingEnabled = true;
             this.cmbSpeed.Items.AddRange(new object[] {
+            "250000",
             "115200",
             "57600",
             "38400",
