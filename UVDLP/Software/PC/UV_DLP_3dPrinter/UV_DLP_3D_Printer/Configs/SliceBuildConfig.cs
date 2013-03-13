@@ -24,6 +24,7 @@ namespace UV_DLP_3D_Printer
         public double ZThick; // thickness of the z layer - slicing height
         public int layertime_ms; // time to project image per layer in milliseconds
         public int firstlayertime_ms; // first layer exposure time 
+        public int numfirstlayers;
         public int blanktime_ms; // blanking time between layers
         public int plat_temp; // desired platform temperature in celsius 
         public bool exportgcode; // export the gcode file when slicing
@@ -133,6 +134,7 @@ namespace UV_DLP_3D_Printer
             m_postliftcode = source.m_postliftcode; // inserted between each slice    
             liftdistance = source.liftdistance;
             direction = source.direction;
+            numfirstlayers = source.numfirstlayers;
             XOffset = source.XOffset;
             YOffset = source.YOffset;
         }
@@ -140,6 +142,7 @@ namespace UV_DLP_3D_Printer
         public SliceBuildConfig() 
         {
             layertime_ms = 5000;// 5 seconds default
+            numfirstlayers = 3;
             CreateDefault();
         }
         public void UpdateFrom(MachineConfig mf)
@@ -162,6 +165,7 @@ namespace UV_DLP_3D_Printer
             dpmmY = 76.8;
             XOffset = 0;
             YOffset = 0;
+            numfirstlayers = 3;
             exportgcode = true;
             exportsvg = false;
             exportimages = false;
@@ -197,6 +201,7 @@ namespace UV_DLP_3D_Printer
                 exportimages = bool.Parse(xr.ReadElementString("ExportImages")); ;
                 XOffset = int.Parse(xr.ReadElementString("XOffset"));
                 YOffset = int.Parse(xr.ReadElementString("YOffset"));
+                numfirstlayers = int.Parse(xr.ReadElementString("NumberofBottomLayers"));
                 direction = (eBuildDirection)Enum.Parse(typeof(eBuildDirection), xr.ReadElementString("Direction"));
                 liftdistance = double.Parse(xr.ReadElementString("LiftDistance"));
                 xr.ReadEndElement();
@@ -231,6 +236,7 @@ namespace UV_DLP_3D_Printer
                 xw.WriteElementString("ExportImages", exportimages.ToString());
                 xw.WriteElementString("XOffset", XOffset.ToString());
                 xw.WriteElementString("YOffset", YOffset.ToString());
+                xw.WriteElementString("NumberofBottomLayers", numfirstlayers.ToString());
                 xw.WriteElementString("Direction", direction.ToString());
                 xw.WriteElementString("LiftDistance", liftdistance.ToString());
 
@@ -259,6 +265,7 @@ namespace UV_DLP_3D_Printer
             sb.Append("(Layer thickness         = " + ZThick + " mm )\r\n");
             sb.Append("(Layer Time              = " + layertime_ms + " ms )\r\n");
             sb.Append("(First Layer Time        = " + firstlayertime_ms + " ms )\r\n");
+            sb.Append("(Number of Bottom Layers = " + numfirstlayers + " )\r\n");
             sb.Append("(Blanking Layer Time     = " + blanktime_ms + " ms )\r\n");
             sb.Append("(Platform Temp           = " + plat_temp + " degrees celsius)\r\n");
             sb.Append("(Build Direction         = " + direction.ToString() + ")\r\n");

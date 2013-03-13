@@ -164,7 +164,57 @@ namespace UV_DLP_3D_Printer
                 g.DrawLine(pen, pnt1, pnt2);            
             }
         }
+        /*
+        public Bitmap RenderSlice(int xres, int yres, int xoff, int yoff)
+        {
+            // create a new bitmap that will be used to draw into
+            Bitmap bmp = new Bitmap(xres, yres);
+            Graphics graph = Graphics.FromImage(bmp);
+            Point pnt1 = new Point(); // create some points for drawing
+            Point pnt2 = new Point();
+            Pen pen = new Pen(Color.White, 1);
+            graph.Clear(Color.Black);
+            //convert all to 2d lines
+            ArrayList lines2d = Get2dLines(sp);
+            Render2dlines(graph, lines2d, sp);
 
+            // find the x/y min/max
+            MinMax_XY mm = CalcMinMax_XY(lines2d);
+            // iterate from the ymin to the ymax
+            for (int y = mm.ymin; y < mm.ymax; y++)
+            {
+                //      get a line of lines that intersect this 2d line
+                ArrayList intersecting = GetIntersecting2dYLines(y, lines2d);
+                //      get the list of point intersections
+                ArrayList points = GetIntersectingPoints(y, intersecting);
+                // sort the points in increasing x order
+                //SortXIncreasing(points);
+                points.Sort();
+                //      draw the X-Spans (should be even number)    
+                //    For a given pair of intersectin points
+                //    (Xi, Y), (Xj, Y)
+                //  −> Fill ceiling(Xi) to floor(Xj)
+                if (points.Count % 2 == 0)  // is even
+                {
+                    for (int cnt = 0; cnt < points.Count; cnt += 2)  // increment by 2
+                    {
+                        Point2d p1 = (Point2d)points[cnt];
+                        Point2d p2 = (Point2d)points[cnt + 1];
+                        pnt1.X = p1.x + xoff;
+                        pnt1.Y = p1.y + yoff;
+                        pnt2.X = p2.x + xoff;
+                        pnt2.Y = p2.y + yoff;
+                        graph.DrawLine(pen, pnt1, pnt2);
+                    }
+                }
+                else  // flag error
+                {
+                    DebugLogger.Instance().LogRecord("Row y=" + y + " odd # of points = " + points.Count);
+                }
+            }
+            return bmp;
+        }
+         * */
         public Bitmap RenderSlice(SliceBuildConfig sp) 
         {
             // create a new bitmap that will be used to draw into
@@ -211,8 +261,7 @@ namespace UV_DLP_3D_Printer
                 {
                     DebugLogger.Instance().LogRecord("Row y=" + y + " odd # of points = " + points.Count);
                 }
-            }
-             
+            }             
             return bmp;
         }
         private void SortXIncreasing(ArrayList points) 

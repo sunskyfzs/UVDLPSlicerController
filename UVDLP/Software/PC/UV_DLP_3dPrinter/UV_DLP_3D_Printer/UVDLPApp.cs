@@ -11,6 +11,7 @@ using UV_DLP_3D_Printer.Drivers;
 using UV_DLP_3D_Printer.Slicing;
 using UV_DLP_3D_Printer;
 using System.Drawing;
+
 namespace UV_DLP_3D_Printer
 {
     public enum eAppEvent 
@@ -50,6 +51,7 @@ namespace UV_DLP_3D_Printer
         public GCodeFile m_gcode;
         // the slicer we're using 
         public Slicer m_slicer;//
+        public FlexSlice m_flexslice;
         //current slice file
         public SliceFile m_slicefile;
         public BuildManager m_buildmgr;
@@ -75,6 +77,7 @@ namespace UV_DLP_3D_Printer
             m_buildmgr = new BuildManager();
             m_slicer = new Slicer();
             m_slicer.Slice_Event += new Slicer.SliceEvent(SliceEv);
+            m_flexslice = new FlexSlice();
             m_gcode = null;
         }
         public enum Platform

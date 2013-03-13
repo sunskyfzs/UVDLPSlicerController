@@ -25,16 +25,20 @@ namespace UV_DLP_3D_Printer
         public double m_PlatZSize; // the Z size of the Z axis length in mm
         private double m_Xpixpermm; // the calculated pixels per mm
         private double m_Ypixpermm; // the calculated pixels per mm
-        public double m_ZMaxFeedrate;// in mm/min 
-        public string m_monitorid; // which monitor we're using
+        private double m_ZMaxFeedrate;// in mm/min 
+
+
+        private string m_monitorid; // which monitor we're using
 
 
         public String m_description; // a description
         public String m_name; // the profile name
         public String m_filename;// the filename of this profile. (not saved)
-
         public DeviceDriverConfig m_driverconfig;
 
+
+        
+        
         public bool Load(string filename) 
         {
             try
@@ -144,5 +148,17 @@ namespace UV_DLP_3D_Printer
         public double PixPerMMY { get { return m_Ypixpermm; } }
         public int XRes { get { return (int)m_XDLPRes; } }
         public int YRes { get { return (int)m_YDLPRes; } }
+        public double ZMaxFeedrate
+        {
+            get { return m_ZMaxFeedrate; }
+            set { m_ZMaxFeedrate = value; }
+        }
+
+        public string Monitorid
+        {
+            get { return m_monitorid; }
+            set { m_monitorid = value; }
+        }
+
     }
 }

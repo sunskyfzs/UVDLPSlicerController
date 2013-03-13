@@ -39,7 +39,7 @@ namespace UV_DLP_3D_Printer
             txtXOffset.Text = UVDLPApp.Instance().m_buildparms.XOffset.ToString();
             txtYOffset.Text = UVDLPApp.Instance().m_buildparms.YOffset.ToString();
             txtLiftDistance.Text = UVDLPApp.Instance().m_buildparms.liftdistance.ToString();
-
+            txtnumbottom.Text = UVDLPApp.Instance().m_buildparms.numfirstlayers.ToString();
             foreach(String name in Enum.GetNames(typeof(SliceBuildConfig.eBuildDirection)))
             {
                 cmbBuildDirection.Items.Add(name);
@@ -61,6 +61,8 @@ namespace UV_DLP_3D_Printer
                 UVDLPApp.Instance().m_buildparms.XOffset = int.Parse(txtXOffset.Text);
                 UVDLPApp.Instance().m_buildparms.YOffset = int.Parse(txtYOffset.Text);
                 UVDLPApp.Instance().m_buildparms.liftdistance = double.Parse(txtLiftDistance.Text);
+                UVDLPApp.Instance().m_buildparms.numfirstlayers = int.Parse(txtnumbottom.Text);
+
                 UVDLPApp.Instance().m_buildparms.direction = (SliceBuildConfig.eBuildDirection)Enum.Parse(typeof(SliceBuildConfig.eBuildDirection), cmbBuildDirection.SelectedItem.ToString());
                 return true;
             }

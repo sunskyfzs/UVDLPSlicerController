@@ -41,16 +41,18 @@
             this.label2 = new System.Windows.Forms.Label();
             this.txtFirstLayerTime = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.txtXOffset = new System.Windows.Forms.TextBox();
             this.txtYOffset = new System.Windows.Forms.TextBox();
+            this.txtXOffset = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.txtBlankTime = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.txtLiftDistance = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.cmbBuildDirection = new System.Windows.Forms.ComboBox();
+            this.txtnumbottom = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -97,7 +99,7 @@
             // 
             this.txtLayerTime.Location = new System.Drawing.Point(21, 74);
             this.txtLayerTime.Name = "txtLayerTime";
-            this.txtLayerTime.Size = new System.Drawing.Size(100, 22);
+            this.txtLayerTime.Size = new System.Drawing.Size(56, 22);
             this.txtLayerTime.TabIndex = 26;
             this.txtLayerTime.Text = "5000";
             // 
@@ -105,7 +107,7 @@
             // 
             this.txtZThick.Location = new System.Drawing.Point(21, 29);
             this.txtZThick.Name = "txtZThick";
-            this.txtZThick.Size = new System.Drawing.Size(100, 22);
+            this.txtZThick.Size = new System.Drawing.Size(56, 22);
             this.txtZThick.TabIndex = 29;
             this.txtZThick.Text = ".025";
             // 
@@ -152,7 +154,7 @@
             // 
             this.txtFirstLayerTime.Location = new System.Drawing.Point(21, 121);
             this.txtFirstLayerTime.Name = "txtFirstLayerTime";
-            this.txtFirstLayerTime.Size = new System.Drawing.Size(100, 22);
+            this.txtFirstLayerTime.Size = new System.Drawing.Size(56, 22);
             this.txtFirstLayerTime.TabIndex = 32;
             this.txtFirstLayerTime.Text = "5000";
             // 
@@ -169,14 +171,21 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Generated Image Pixel Offsets";
             // 
-            // label3
+            // txtYOffset
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(7, 24);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(59, 17);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "X Offset";
+            this.txtYOffset.Location = new System.Drawing.Point(72, 65);
+            this.txtYOffset.Name = "txtYOffset";
+            this.txtYOffset.Size = new System.Drawing.Size(68, 22);
+            this.txtYOffset.TabIndex = 3;
+            this.txtYOffset.Text = "0";
+            // 
+            // txtXOffset
+            // 
+            this.txtXOffset.Location = new System.Drawing.Point(72, 24);
+            this.txtXOffset.Name = "txtXOffset";
+            this.txtXOffset.Size = new System.Drawing.Size(68, 22);
+            this.txtXOffset.TabIndex = 2;
+            this.txtXOffset.Text = "0";
             // 
             // label4
             // 
@@ -187,21 +196,14 @@
             this.label4.TabIndex = 1;
             this.label4.Text = "Y Offset";
             // 
-            // txtXOffset
+            // label3
             // 
-            this.txtXOffset.Location = new System.Drawing.Point(72, 24);
-            this.txtXOffset.Name = "txtXOffset";
-            this.txtXOffset.Size = new System.Drawing.Size(68, 22);
-            this.txtXOffset.TabIndex = 2;
-            this.txtXOffset.Text = "0";
-            // 
-            // txtYOffset
-            // 
-            this.txtYOffset.Location = new System.Drawing.Point(72, 65);
-            this.txtYOffset.Name = "txtYOffset";
-            this.txtYOffset.Size = new System.Drawing.Size(68, 22);
-            this.txtYOffset.TabIndex = 3;
-            this.txtYOffset.Text = "0";
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(7, 24);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(59, 17);
+            this.label3.TabIndex = 0;
+            this.label3.Text = "X Offset";
             // 
             // label5
             // 
@@ -214,9 +216,9 @@
             // 
             // txtBlankTime
             // 
-            this.txtBlankTime.Location = new System.Drawing.Point(21, 166);
+            this.txtBlankTime.Location = new System.Drawing.Point(21, 168);
             this.txtBlankTime.Name = "txtBlankTime";
-            this.txtBlankTime.Size = new System.Drawing.Size(100, 22);
+            this.txtBlankTime.Size = new System.Drawing.Size(56, 22);
             this.txtBlankTime.TabIndex = 35;
             this.txtBlankTime.Text = "5000";
             // 
@@ -254,11 +256,30 @@
             this.cmbBuildDirection.Size = new System.Drawing.Size(121, 24);
             this.cmbBuildDirection.TabIndex = 40;
             // 
+            // txtnumbottom
+            // 
+            this.txtnumbottom.Location = new System.Drawing.Point(162, 121);
+            this.txtnumbottom.Name = "txtnumbottom";
+            this.txtnumbottom.Size = new System.Drawing.Size(56, 22);
+            this.txtnumbottom.TabIndex = 41;
+            this.txtnumbottom.Text = "3";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(96, 124);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(63, 17);
+            this.label8.TabIndex = 42;
+            this.label8.Text = "# Layers";
+            // 
             // frmSliceOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(614, 361);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.txtnumbottom);
             this.Controls.Add(this.cmbBuildDirection);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
@@ -316,5 +337,7 @@
         private System.Windows.Forms.TextBox txtLiftDistance;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.ComboBox cmbBuildDirection;
+        private System.Windows.Forms.TextBox txtnumbottom;
+        private System.Windows.Forms.Label label8;
     }
 }

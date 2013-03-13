@@ -88,6 +88,12 @@ namespace UV_DLP_3D_Printer.GUI
             }
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            frmFlexSliceOptions fso = new frmFlexSliceOptions();
+            fso.Show();
+        }
+
 
     }
 }

@@ -32,7 +32,7 @@
 
 //// Calibration variables
 // X, Y, Z, E steps per unit - Metric Prusa Mendel with Wade extruder:
-#define _AXIS_STEP_PER_UNIT {80, 80, 3200/1.25,700}
+#define _AXIS_STEP_PER_UNIT {80, 80, 1136.3636,700}
 // Metric Prusa Mendel with Makergear geared stepper extruder:
 //#define _AXIS_STEP_PER_UNIT {80,80,3200/1.25,1380}
 // MakerGear Hybrid Prusa Mendel:
@@ -147,8 +147,8 @@ const int Z_MAX_LENGTH = 250;
 //// MOVEMENT SETTINGS
 //-----------------------------------------------------------------------
 const int NUM_AXIS = 4; // The axis order in all axis related arrays is X, Y, Z, E
-#define _MAX_FEEDRATE {400, 400, 2, 45}       // (mm/sec)    
-#define _HOMING_FEEDRATE {1500,1500,120}      // (mm/min) !!
+#define _MAX_FEEDRATE {400, 400, 200, 45}       // (mm/sec)    
+#define _HOMING_FEEDRATE {1500,1500,100}      // (mm/min) !!
 #define _AXIS_RELATIVE_MODES {false, false, false, false}
 
 #define MAX_STEP_FREQUENCY 30000 // Max step frequency

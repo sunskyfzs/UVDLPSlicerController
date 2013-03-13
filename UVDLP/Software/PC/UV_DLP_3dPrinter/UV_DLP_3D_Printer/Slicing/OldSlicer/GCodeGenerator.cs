@@ -48,8 +48,10 @@ namespace UV_DLP_3D_Printer
             String gcode;
             StringBuilder sb = new StringBuilder();
             double zdist = 0.0;
-            double feedrate = pi.m_ZMaxFeedrate; // 10mm/min
+            double feedrate = pi.ZMaxFeedrate; // 10mm/min
             double zdir = 1.0; // assume a bottom up machine
+            int numbottom = sf.m_config.numfirstlayers;
+
             if (sf.m_config.direction == SliceBuildConfig.eBuildDirection.Top_Down) 
             {
                 zdir = -1.0;// top down machine, reverse the z direction
@@ -70,11 +72,11 @@ namespace UV_DLP_3D_Printer
             for (int c = 0; c < sf.m_slices.Count; c++ )
             {               
                 //move the z axis to the right layer position
-                sb.Append("G1 Z" + String.Format("{0:0.00000}", (zdist * zdir)) + " F" + feedrate + "\r\n");
+              //  sb.Append("G1 Z" + String.Format("{0:0.00000}", (zdist * zdir)) + " F" + feedrate + "\r\n");
                 // this is the marker the BuildManager uses to display the correct slice
                 sb.Append( "(<Slice> " + c + " )\r\n");
                 // add a pause for the UV resin to be set using this image
-                if (c == 0)// check for the first layer
+                if (c < numbottom)// check for the bottom layers
                 {
                     sb.Append(firstlayerdelay);               
                 }
@@ -91,6 +93,8 @@ namespace UV_DLP_3D_Printer
                 sb.Append("G1 Z" + String.Format("{0:0.00000}", (sf.m_config.liftdistance * zdir * -1)) + " F" + feedrate + " (End Lift) \r\n");
                 // add a delay for the lift sequence and the pre/post lift codes to execute
                 sb.Append(blankdelay);
+                // this move is moved to the end, so the first layer doesn't try to move up
+                sb.Append("G1 Z" + String.Format("{0:0.00000}", (zdist * zdir)) + " F" + feedrate + "\r\n");
             }
             //append the footer
             sb.Append(sf.m_config.FooterCode);

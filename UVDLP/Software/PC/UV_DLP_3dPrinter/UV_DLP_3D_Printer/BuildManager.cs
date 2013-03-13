@@ -24,6 +24,8 @@ namespace UV_DLP_3D_Printer
     {
         ePrintStarted,
         ePrintCancelled,
+        ePrintPaused,
+        ePrintResumed,
         eLayerCompleted,
         ePrintCompleted
     }
@@ -51,6 +53,7 @@ namespace UV_DLP_3D_Printer
         public delPrintStatus PrintStatus; // the delegate to let the rest of the world know
         public delPrinterLayer PrintLayer; // the delegate to show a new layer
         private bool m_printing = false;
+        private bool m_paused = false;
         private int m_curlayer = 0; // the current visible slice layer index #
         SliceFile m_sf = null; // current file we're building
         GCodeFile m_gcode = null; // a reference from the zactive gcode file
@@ -148,6 +151,23 @@ namespace UV_DLP_3D_Printer
                 PrintStatus(status);
             }
         }
+        public bool IsPaused() 
+        {
+            return m_paused;
+        }
+        public void PausePrint() 
+        {
+            m_paused = true;
+            m_state = STATE_IDLE;
+            RaiseStatusEvent(ePrintStat.ePrintPaused);
+        }
+        public void ResumePrint() 
+        {
+            m_paused = false;
+            m_state = BuildManager.STATE_DO_NEXT_LAYER;
+            RaiseStatusEvent(ePrintStat.ePrintResumed);
+        }
+
         // This function is called to start the print job
         public void StartPrint(SliceFile sf, GCodeFile gcode) 
         {
@@ -249,6 +269,8 @@ namespace UV_DLP_3D_Printer
                         line = line.Trim();
                         if (line.Length > 0)
                         {
+                            // send  the line, whether or not it's a comment
+                            UVDLPApp.Instance().m_deviceinterface.SendCommandToDevice(line + "\r\n");
                             // if the line is a comment, parse it to see if we need to take action
                             if (line.Contains("(<Delay> "))// get the delay
                             {                                
@@ -288,15 +310,7 @@ namespace UV_DLP_3D_Printer
                                 {
                                     PrintLayer(bmp, m_curlayer, curtype);
                                 }
-                            }
-                            else if (line.Trim().StartsWith("("))// ignore line comment
-                            {
-                            }
-                            else
-                            {
-                                //send to device
-                                UVDLPApp.Instance().m_deviceinterface.SendCommandToDevice(line + "\r\n");
-                            }
+                            }                           
                         }
                         break;
                     case BuildManager.STATE_DONE:
@@ -333,6 +347,7 @@ namespace UV_DLP_3D_Printer
                     PrintStatus(ePrintStat.ePrintCancelled);
                 }
             }
+            m_paused = false;
         }
     }
 }

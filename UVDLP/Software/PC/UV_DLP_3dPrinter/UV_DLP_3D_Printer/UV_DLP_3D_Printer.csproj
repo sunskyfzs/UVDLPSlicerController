@@ -74,10 +74,18 @@
     <Compile Include="Configs\AppConfig.cs" />
     <Compile Include="Configs\ConnectionConfig.cs" />
     <Compile Include="Configs\DeviceDriverConfig.cs" />
+    <Compile Include="Configs\ParmList.cs" />
     <Compile Include="Device_Interface\DeviceDriver.cs" />
     <Compile Include="Device_Interface\NULLdriver.cs" />
     <Compile Include="Device_Interface\DriverFactory.cs" />
     <Compile Include="Device_Interface\GenericDriver.cs" />
+    <Compile Include="Device_Interface\RobotFactorySRL_3DLPrinter.cs" />
+    <Compile Include="GUI\frm3DLPrinterControl.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\frm3DLPrinterControl.Designer.cs">
+      <DependentUpon>frm3DLPrinterControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\frmConnection.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -89,6 +97,12 @@
     </Compile>
     <Compile Include="GUI\frmControl.Designer.cs">
       <DependentUpon>frmControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\frmFlexSliceOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\frmFlexSliceOptions.Designer.cs">
+      <DependentUpon>frmFlexSliceOptions.cs</DependentUpon>
     </Compile>
     <Compile Include="GUI\frmGCodeRaw.cs">
       <SubType>Form</SubType>
@@ -115,8 +129,13 @@
       <DependentUpon>frmSlice.cs</DependentUpon>
     </Compile>
     <Compile Include="Slicing\FlexSlice.cs" />
-    <Compile Include="Slicing\Modules\RaftModule.cs" />
-    <Compile Include="Slicing\Modules\SParm.cs" />
+    <Compile Include="Slicing\Modules\Carve.cs" />
+    <Compile Include="Slicing\Modules\ImageSliceExporter.cs" />
+    <Compile Include="Slicing\Modules\Raft.cs" />
+    <Compile Include="Configs\Parm.cs" />
+    <Compile Include="Slicing\Modules\UV_Bottom.cs" />
+    <Compile Include="Slicing\Modules\UV_GCode_Gen.cs" />
+    <Compile Include="Slicing\SliceData.cs" />
     <Compile Include="Slicing\SliceFile.cs" />
     <Compile Include="Slicing\Modules\SliceModule.cs" />
     <Compile Include="Slicing\Modules\SupportGen.cs" />
@@ -161,11 +180,17 @@
     <Compile Include="BuildManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="GUI\frm3DLPrinterControl.resx">
+      <DependentUpon>frm3DLPrinterControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUI\frmConnection.resx">
       <DependentUpon>frmConnection.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\frmControl.resx">
       <DependentUpon>frmControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\frmFlexSliceOptions.resx">
+      <DependentUpon>frmFlexSliceOptions.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\frmGCodeRaw.resx">
       <DependentUpon>frmGCodeRaw.cs</DependentUpon>
@@ -219,6 +244,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Notes.txt" />
+    <Content Include="Slicing\SlicerNotes1.txt" />
     <None Include="resources\Load.jpg" />
     <None Include="resources\slice.jpg" />
     <None Include="resources\IconsLandVistaArrowIconsDemo\PNG\64x64\Down1Blue.png" />

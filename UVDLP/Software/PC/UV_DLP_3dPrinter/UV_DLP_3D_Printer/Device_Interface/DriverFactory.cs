@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UV_DLP_3D_Printer.Device_Interface;
 
 namespace UV_DLP_3D_Printer.Drivers
 {
@@ -15,6 +16,8 @@ namespace UV_DLP_3D_Printer.Drivers
                     return new NULLdriver();
                 case eDriverType.eGENERIC:
                     return new GenericDriver();
+                case eDriverType.eRF_3DLPRINTER:
+                    return new RobotFactorySRL_3DLPrinter();
                 default:
                     return null;
             }

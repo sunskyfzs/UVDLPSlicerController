@@ -48,12 +48,12 @@ namespace UV_DLP_3D_Printer
                 txtPlatTall.Text = m_config.m_PlatZSize.ToString();
                 projwidth.Text = "" + m_config.XRes;
                 projheight.Text = "" + m_config.YRes;
-                txtZFeed.Text = m_config.m_ZMaxFeedrate.ToString();
+                txtZFeed.Text = m_config.ZMaxFeedrate.ToString();
                 //select the current monitor
                 int idx = 0;
                 foreach (String s in lstMonitors.Items) 
                 {
-                    if (s.Equals(m_config.m_monitorid)) 
+                    if (s.Equals(m_config.Monitorid)) 
                     {
                         lstMonitors.SelectedIndex = idx;
                     }
@@ -83,10 +83,10 @@ namespace UV_DLP_3D_Printer
                 m_config.m_PlatZSize = double.Parse(txtPlatTall.Text);
                 m_config.m_XDLPRes = double.Parse(projwidth.Text);
                 m_config.m_YDLPRes = double.Parse(projheight.Text);
-                m_config.m_ZMaxFeedrate = double.Parse(txtZFeed.Text);
+                m_config.ZMaxFeedrate = double.Parse(txtZFeed.Text);
                 if (lstMonitors.SelectedIndex != -1)
                 {
-                    m_config.m_monitorid = Screen.AllScreens[lstMonitors.SelectedIndex].DeviceName;// lstMonitors.Items[lstMonitors.SelectedIndex].ToString();
+                    m_config.Monitorid = Screen.AllScreens[lstMonitors.SelectedIndex].DeviceName;// lstMonitors.Items[lstMonitors.SelectedIndex].ToString();
                 }
                 return true;
             }

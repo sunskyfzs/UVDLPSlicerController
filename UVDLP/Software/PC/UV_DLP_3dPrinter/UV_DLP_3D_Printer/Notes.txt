@@ -129,3 +129,15 @@ the slicer holds all the intermediate data that each module can operate upon.
 This set of configured slicing parameters can be saved as a slicing / building profile
 
 I think this approach will later allow other slicing types, such as for my makerbot or reprap
+
+
+Zsteps per mm
+20 tpi rod
+200 steps per revolution for stepper
+
+200 steps = 1/20 th of an inch = .05 inch / 200 = .00025 inch /step
+
+.00025 * 25.4 =  .00635 mm / step
+
+mm =in  / 0.039370
+

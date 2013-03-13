@@ -17,6 +17,7 @@ namespace UV_DLP_3D_Printer.Drivers
     {
         eNULL_DRIVER, // the driver for testing when a mavchine is not connected, it always returns OK
         eGENERIC, // whatever class of driver you call this, I've been using sailfish, and it seems to work great
+        eRF_3DLPRINTER, // the Italian Robot Factory 3DLPrinter
     }
     public enum eDeviceStatus 
     {
@@ -67,7 +68,10 @@ namespace UV_DLP_3D_Printer.Drivers
                 DataReceived(device, data, length);
             }
         }
-
+        public eDriverType DriverType
+        {
+            get { return m_drivertype; }
+        }
         public abstract bool Connect();
         public abstract bool Disconnect();
         public abstract int Write(byte[] data, int len);

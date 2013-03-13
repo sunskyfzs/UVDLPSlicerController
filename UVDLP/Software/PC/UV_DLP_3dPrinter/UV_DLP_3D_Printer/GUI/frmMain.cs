@@ -31,6 +31,7 @@ namespace UV_DLP_3D_Printer
         frmDLP m_frmdlp = new frmDLP();
         frmSliceOptions m_frmsliceopt = new frmSliceOptions();
         frmControl m_frmcontrol = new frmControl();
+        frm3DLPrinterControl m_frm3DLPControl = new frm3DLPrinterControl();
         frmSlice m_frmSlice = new frmSlice();
         frmGCodeRaw m_sendgcode = new frmGCodeRaw();
         frmMachineProfileManager m_machineprofilemanager = new frmMachineProfileManager();
@@ -55,7 +56,7 @@ namespace UV_DLP_3D_Printer
             UVDLPApp.Instance().m_buildmgr.PrintLayer += new delPrinterLayer(PrintLayer);
             DebugLogger.Instance().LoggerStatusEvent += new LoggerStatusHandler(LoggerStatusEvent);
             UVDLPApp.Instance().m_deviceinterface.StatusEvent += new DeviceInterface.DeviceInterfaceStatus(DeviceStatusEvent);
-            SetConnectionStatus();
+            SetButtonStatuses();            
             SetMouseModeChecks();
             PopulateMachinesMenu();
             SetupSceneTree();
@@ -120,16 +121,62 @@ namespace UV_DLP_3D_Printer
                 }
             }
         }
-        
-        private void SetConnectionStatus() 
+        /*
+        private void SetPrintButtonStatus() 
+        {
+            if (UVDLPApp.Instance().m_buildmgr.IsPrinting)
+            {
+                if (UVDLPApp.Instance().m_buildmgr.IsPaused())
+                {
+                    cmdBuild.Enabled = true;
+                    cmdStop.Enabled = true;
+                    cmdPause.Enabled = false;
+                }
+                else 
+                {
+                    cmdBuild.Enabled = false;
+                    cmdStop.Enabled = true;
+                    cmdPause.Enabled = true;                
+                }
+            }
+            else 
+            {
+                cmdBuild.Enabled = true;
+                cmdStop.Enabled = false;
+                cmdPause.Enabled = false;
+            }
+        }
+        */
+        private void SetButtonStatuses() 
         {
             if (UVDLPApp.Instance().m_deviceinterface.Connected)
             {
                 cmdConnect.Enabled = false;
                 cmdDisconnect.Enabled = true;
                 cmdControl.Enabled = true;
-                cmdBuild.Enabled = true;
-                cmdStop.Enabled = true;
+
+
+                if (UVDLPApp.Instance().m_buildmgr.IsPrinting)
+                {
+                    if (UVDLPApp.Instance().m_buildmgr.IsPaused())
+                    {
+                        cmdBuild.Enabled = true;
+                        cmdStop.Enabled = true;
+                        cmdPause.Enabled = false;
+                    }
+                    else
+                    {
+                        cmdBuild.Enabled = false;
+                        cmdStop.Enabled = true;
+                        cmdPause.Enabled = true;
+                    }
+                }
+                else
+                {
+                    cmdBuild.Enabled = true;
+                    cmdStop.Enabled = false;
+                    cmdPause.Enabled = false;
+                }
             }
             else 
             {
@@ -138,6 +185,7 @@ namespace UV_DLP_3D_Printer
                 cmdControl.Enabled = false;
                 cmdBuild.Enabled = false;
                 cmdStop.Enabled = false;
+                cmdPause.Enabled = false; // disable
 
             }
         }
@@ -170,6 +218,7 @@ namespace UV_DLP_3D_Printer
                 if (obj == UVDLPApp.Instance().m_selectedobject)  // expand this node
                 {
                     objnode.Expand();
+                    objnode.BackColor = Color.LightBlue;
                     treeScene.SelectedNode = objnode;
                 }
 
@@ -187,11 +236,11 @@ namespace UV_DLP_3D_Printer
             switch (status) 
             {
                 case ePIStatus.eConnected:
-                    SetConnectionStatus();
+                    SetButtonStatuses();
                     DebugLogger.Instance().LogRecord("Device Connected");
                     break;
                 case ePIStatus.eDisconnected:
-                    SetConnectionStatus();
+                    SetButtonStatuses();
                     DebugLogger.Instance().LogRecord("Device Disconnected");
                     break;
                 case ePIStatus.eError:
@@ -232,21 +281,32 @@ namespace UV_DLP_3D_Printer
                 String message = "";
                 switch (printstat)
                 {
+                    case ePrintStat.ePrintPaused:
+                        message = "Print Paused";
+                        SetButtonStatuses();
+                        break;
+                    case ePrintStat.ePrintResumed:
+                        message = "Print Resumed";
+                        SetButtonStatuses();
+                        break;
                     case ePrintStat.ePrintCancelled:
                         message = "Print Cancelled";
+                        SetButtonStatuses();
                         break;
                     case ePrintStat.eLayerCompleted:
                         message = "Layer Completed";
                         break;
                     case ePrintStat.ePrintCompleted:
                         message = "Print Completed";
+                        SetButtonStatuses();
                         MessageBox.Show("Build Completed");
                         break;
                     case ePrintStat.ePrintStarted:
                         message = "Print Started";
+                        SetButtonStatuses();
                         if (!ShowDLPScreen()) 
                         {
-                            MessageBox.Show("Monitor " + UVDLPApp.Instance().m_printerinfo.m_monitorid + " not found, cancelling build","Error");
+                            MessageBox.Show("Monitor " + UVDLPApp.Instance().m_printerinfo.Monitorid + " not found, cancelling build","Error");
                             UVDLPApp.Instance().m_buildmgr.CancelPrint();
                         }
                         break;
@@ -641,9 +701,19 @@ namespace UV_DLP_3D_Printer
 
         private void cmdStartPrint_Click(object sender, EventArgs e)
         {
-            UVDLPApp.Instance().m_buildmgr.StartPrint(UVDLPApp.Instance().m_slicefile, UVDLPApp.Instance().m_gcode);
+            if (UVDLPApp.Instance().m_buildmgr.IsPaused())
+            {
+                UVDLPApp.Instance().m_buildmgr.ResumePrint();
+            }
+            else
+            {
+                UVDLPApp.Instance().m_buildmgr.StartPrint(UVDLPApp.Instance().m_slicefile, UVDLPApp.Instance().m_gcode);
+            }
         }
-
+        private void cmdPause_Click(object sender, EventArgs e)
+        {
+            //UVDLPApp.Instance().m_buildmgr.StartPrint(UVDLPApp.Instance().m_slicefile, UVDLPApp.Instance().m_gcode);
+        }
         private void cmdPlace_Click(object sender, EventArgs e)
         {
             if (UVDLPApp.Instance().m_selectedobject == null) 
@@ -747,11 +817,25 @@ namespace UV_DLP_3D_Printer
 
         private void cmdControl_Click(object sender, EventArgs e)
         {
-            if (m_frmcontrol.IsDisposed)
+            switch (UVDLPApp.Instance().m_deviceinterface.Driver.DriverType) 
             {
-                m_frmcontrol = new frmControl();
+                case Drivers.eDriverType.eGENERIC:
+                case Drivers.eDriverType.eNULL_DRIVER:
+                    if (m_frmcontrol.IsDisposed)
+                    {
+                        m_frmcontrol = new frmControl();
+                    }
+                    m_frmcontrol.Show();
+                    break;
+                case Drivers.eDriverType.eRF_3DLPRINTER:
+                    if (m_frm3DLPControl.IsDisposed) 
+                    {
+                        m_frm3DLPControl = new frm3DLPrinterControl();
+                    }
+                    m_frm3DLPControl.Show();
+                    break;
             }
-            m_frmcontrol.Show();
+
         }
 
         private void connectionToolStripMenuItem_Click(object sender, EventArgs e)
@@ -815,7 +899,12 @@ namespace UV_DLP_3D_Printer
         {
             if (e.Node.Tag != null)
             {
-                UVDLPApp.Instance().m_selectedobject = (Object3d)e.Node.Tag;
+                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                {
+                    UVDLPApp.Instance().m_selectedobject = (Object3d)e.Node.Tag;
+                    SetupSceneTree();
+                }
+                
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)  // we right clicked a menu item, check and see if it has a tag
                 {
                     contextMenuStrip1.Show(treeScene,e.Node.Bounds.Left, e.Node.Bounds.Top);
@@ -1149,7 +1238,7 @@ namespace UV_DLP_3D_Printer
             Screen dlpscreen = null;
             foreach (Screen s in Screen.AllScreens)
             {
-                if (s.DeviceName.Equals(UVDLPApp.Instance().m_printerinfo.m_monitorid))
+                if (s.DeviceName.Equals(UVDLPApp.Instance().m_printerinfo.Monitorid))
                 {
                     dlpscreen = s;
                     break;
@@ -1158,7 +1247,7 @@ namespace UV_DLP_3D_Printer
             if (dlpscreen == null)
             {
                 dlpscreen = Screen.AllScreens[0]; // default to the first if we can't find it
-                DebugLogger.Instance().LogRecord("Can't find screen " + UVDLPApp.Instance().m_printerinfo.m_monitorid);
+                DebugLogger.Instance().LogRecord("Can't find screen " + UVDLPApp.Instance().m_printerinfo.Monitorid);
             }
             return dlpscreen;
         }
@@ -1184,5 +1273,14 @@ namespace UV_DLP_3D_Printer
             }
         }
         #endregion DLP screen controls
+
+        private void showCurrentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void cmdPause_Click_1(object sender, EventArgs e)
+        {
+            UVDLPApp.Instance().m_buildmgr.PausePrint();
+        }
     }
 }

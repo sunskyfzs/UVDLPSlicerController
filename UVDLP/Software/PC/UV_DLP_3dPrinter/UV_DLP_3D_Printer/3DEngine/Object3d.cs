@@ -115,9 +115,10 @@ namespace Engine3D
         {
             foreach (Point3d p in m_lstpoints) 
             {
-                if (pnt.x == p.x && pnt.y == p.y && pnt.z == p.z) return pnt;
+                if (pnt.Equals(p)) // if it's already in the list, return it
+                    return p;
             }
-            m_lstpoints.Add(pnt);
+            m_lstpoints.Add(pnt); // otherwise add it to the list
             return pnt;
         }
         private void LoadDXFPolyPoints(out Point3d[] pnts, StreamReader sr) 
@@ -326,13 +327,16 @@ namespace Engine3D
                     p.m_points = new Point3d[3]; // create storage
                     for (int pc = 0; pc < 3; pc++) //iterate through the points
                     {
+                        /*
+                        Point3d pnt = new Point3d();
+                        pnt.Load(br);
+                        p.m_points[pc] = AddUniqueVert(pnt);
+                        */
+                        
                         p.m_points[pc] = new Point3d();
-                        //Point3d pnt = new Point3d();
-                        //pnt.Load(br);
-                        //p.m_points[pc] = AddUniqueVert(pnt);
                         p.m_points[pc].Load(br);
                         m_lstpoints.Add(p.m_points[pc]);                       
-
+                        
                     }
                     uint attr = br.ReadUInt16(); // not used attribute
                     p.CalcNormal();

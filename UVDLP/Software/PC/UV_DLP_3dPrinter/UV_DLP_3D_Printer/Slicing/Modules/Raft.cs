@@ -5,13 +5,13 @@ using System.Text;
 
 namespace UV_DLP_3D_Printer.Slicing.Modules
 {
-    public class RaftModule : SliceModule
+    public class Raft : SliceModule
     {
-        public RaftModule() 
+        public Raft()
         {
             m_name = "Raft Generator";
             m_description = "This module generates raft for the base layer";
-            m_help = "<info about configuration of this module goes in here>";        
+            m_help = "<info about configuration of this module goes in here>";            
         }
     }
 }
