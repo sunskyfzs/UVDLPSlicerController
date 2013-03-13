@@ -153,68 +153,21 @@ namespace UV_DLP_3D_Printer
             Point pnt1 = new Point(); // create some points for drawing
             Point pnt2 = new Point();
             Pen pen = new Pen(Color.White, 1);
+            int hxres = sp.xres / 2;
+            int hyres = sp.yres / 2;
+
             foreach(Line2d ln in lines)
             {
                 Point2d p1 = (Point2d)ln.p1;
                 Point2d p2 = (Point2d)ln.p2;
-                pnt1.X = p1.x + sp.XOffset;
-                pnt1.Y = p1.y + sp.YOffset;
-                pnt2.X = p2.x + sp.XOffset;
-                pnt2.Y = p2.y + sp.YOffset;
-                g.DrawLine(pen, pnt1, pnt2);            
+                pnt1.X = (int)(p1.x ) + sp.XOffset + hxres;
+                pnt1.Y = (int)(p1.y ) + sp.YOffset + hyres;
+                pnt2.X = (int)(p2.x ) + sp.XOffset + hxres;
+                pnt2.Y = (int)(p2.y ) + sp.YOffset + hyres;
+                
+                g.DrawLine(pen, pnt1, pnt2);       
             }
         }
-        /*
-        public Bitmap RenderSlice(int xres, int yres, int xoff, int yoff)
-        {
-            // create a new bitmap that will be used to draw into
-            Bitmap bmp = new Bitmap(xres, yres);
-            Graphics graph = Graphics.FromImage(bmp);
-            Point pnt1 = new Point(); // create some points for drawing
-            Point pnt2 = new Point();
-            Pen pen = new Pen(Color.White, 1);
-            graph.Clear(Color.Black);
-            //convert all to 2d lines
-            ArrayList lines2d = Get2dLines(sp);
-            Render2dlines(graph, lines2d, sp);
-
-            // find the x/y min/max
-            MinMax_XY mm = CalcMinMax_XY(lines2d);
-            // iterate from the ymin to the ymax
-            for (int y = mm.ymin; y < mm.ymax; y++)
-            {
-                //      get a line of lines that intersect this 2d line
-                ArrayList intersecting = GetIntersecting2dYLines(y, lines2d);
-                //      get the list of point intersections
-                ArrayList points = GetIntersectingPoints(y, intersecting);
-                // sort the points in increasing x order
-                //SortXIncreasing(points);
-                points.Sort();
-                //      draw the X-Spans (should be even number)    
-                //    For a given pair of intersectin points
-                //    (Xi, Y), (Xj, Y)
-                //  −> Fill ceiling(Xi) to floor(Xj)
-                if (points.Count % 2 == 0)  // is even
-                {
-                    for (int cnt = 0; cnt < points.Count; cnt += 2)  // increment by 2
-                    {
-                        Point2d p1 = (Point2d)points[cnt];
-                        Point2d p2 = (Point2d)points[cnt + 1];
-                        pnt1.X = p1.x + xoff;
-                        pnt1.Y = p1.y + yoff;
-                        pnt2.X = p2.x + xoff;
-                        pnt2.Y = p2.y + yoff;
-                        graph.DrawLine(pen, pnt1, pnt2);
-                    }
-                }
-                else  // flag error
-                {
-                    DebugLogger.Instance().LogRecord("Row y=" + y + " odd # of points = " + points.Count);
-                }
-            }
-            return bmp;
-        }
-         * */
         public Bitmap RenderSlice(SliceBuildConfig sp) 
         {
             // create a new bitmap that will be used to draw into
@@ -225,13 +178,16 @@ namespace UV_DLP_3D_Printer
             Pen pen = new Pen(Color.White,1);
             graph.Clear(Color.Black);
             //convert all to 2d lines
+            int hxres = sp.xres / 2;
+            int hyres = sp.yres / 2;
+
             ArrayList lines2d = Get2dLines(sp);
             Render2dlines(graph, lines2d,sp);
             
             // find the x/y min/max
             MinMax_XY mm = CalcMinMax_XY(lines2d);
             // iterate from the ymin to the ymax
-            for (int y = mm.ymin; y < mm.ymax; y++) 
+            for (int y = mm.ymin; y < mm.ymax; y++) // this needs to be in scaled value 
             {
                 //      get a line of lines that intersect this 2d line
                 ArrayList intersecting = GetIntersecting2dYLines(y, lines2d);
@@ -250,11 +206,12 @@ namespace UV_DLP_3D_Printer
                     {
                         Point2d p1 = (Point2d)points[cnt];
                         Point2d p2 = (Point2d)points[cnt+1];
-                        pnt1.X = p1.x + sp.XOffset;
-                        pnt1.Y = p1.y + sp.YOffset;
-                        pnt2.X = p2.x + sp.XOffset;
-                        pnt2.Y = p2.y + sp.YOffset;
-                        graph.DrawLine(pen, pnt1, pnt2);
+                        pnt1.X = (int)(p1.x + sp.XOffset + hxres);
+                        pnt1.Y = (int)(p1.y + sp.YOffset + hyres);
+                        pnt2.X = (int)(p2.x + sp.XOffset + hxres);
+                        pnt2.Y = (int)(p2.y + sp.YOffset + hyres);
+
+                        graph.DrawLine(pen, pnt1.X,pnt1.Y, pnt2.X,pnt2.Y);
                     }
                 }
                 else  // flag error
@@ -317,8 +274,6 @@ namespace UV_DLP_3D_Printer
         private ArrayList Get2dLines(SliceBuildConfig sp) 
         {
             ArrayList lst = new ArrayList();
-            int hxres = sp.xres / 2;
-            int hyres = sp.yres / 2;
             foreach (PolyLine3d ply in m_segments) 
             {
                 Line2d ln = new Line2d();
@@ -326,10 +281,15 @@ namespace UV_DLP_3D_Printer
                 Point3d p3d1 = (Point3d)ply.m_points[0];
                 Point3d p3d2 = (Point3d)ply.m_points[1];
                 //convert them to 2d (probably should add an offset to center them)
-                ln.p1.x = (int)(p3d1.x * sp.dpmmX) + hxres;
-                ln.p1.y = (int)(p3d1.y * sp.dpmmY) + hyres;
-                ln.p2.x = (int)(p3d2.x * sp.dpmmX) + hxres;
-                ln.p2.y = (int)(p3d2.y * sp.dpmmY) + hyres;
+                ln.p1.x = (int)(p3d1.x * sp.dpmmX);// +hxres;
+                ln.p1.y = (int)(p3d1.y * sp.dpmmY);// +hyres;
+                ln.p2.x = (int)(p3d2.x * sp.dpmmX);// +hxres;
+                ln.p2.y = (int)(p3d2.y * sp.dpmmY);// +hyres;
+//                pnt1.X = (int)(p1.x * sp.dpmmX + sp.XOffset + hxres);
+ //               pnt1.Y = (int)(p1.y * sp.dpmmY + sp.YOffset + hyres);
+   //             pnt2.X = (int)(p2.x * sp.dpmmX + sp.XOffset + hxres);
+     //           pnt2.Y = (int)(p2.y * sp.dpmmY + sp.YOffset + hyres);
+
                 lst.Add(ln);
             }
             return lst; // return the list

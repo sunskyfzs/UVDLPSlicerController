@@ -61,6 +61,7 @@ namespace UV_DLP_3D_Printer
                 m_Ypixpermm = double.Parse(xr.ReadElementString("PixPermmY"));
                 m_ZMaxFeedrate = double.Parse(xr.ReadElementString("MaxZFeedRate"));
                 m_monitorid = xr.ReadElementString("MonitorID");
+                CalcPixPerMM();
 
                 if (m_driverconfig.Load(xr))
                 {
@@ -124,7 +125,7 @@ namespace UV_DLP_3D_Printer
             
         }
 
-        private void CalcPixPerMM() 
+        public void CalcPixPerMM() 
         {
             m_Xpixpermm = m_XDLPRes / m_PlatXSize;
             m_Ypixpermm = m_YDLPRes / m_PlatYSize;

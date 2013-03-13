@@ -84,6 +84,7 @@ namespace UV_DLP_3D_Printer
                 m_config.m_XDLPRes = double.Parse(projwidth.Text);
                 m_config.m_YDLPRes = double.Parse(projheight.Text);
                 m_config.ZMaxFeedrate = double.Parse(txtZFeed.Text);
+                m_config.CalcPixPerMM();
                 if (lstMonitors.SelectedIndex != -1)
                 {
                     m_config.Monitorid = Screen.AllScreens[lstMonitors.SelectedIndex].DeviceName;// lstMonitors.Items[lstMonitors.SelectedIndex].ToString();

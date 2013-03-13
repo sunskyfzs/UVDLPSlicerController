@@ -1223,6 +1223,7 @@ namespace UV_DLP_3D_Printer
 
         private void showCalibrationToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            UVDLPApp.Instance().m_buildparms.UpdateFrom(UVDLPApp.Instance().m_printerinfo);
             ShowDLPScreen();
             Screen dlpscreen = GetDLPScreen();
             UVDLPApp.Instance().m_buildmgr.ShowCalibration(dlpscreen.Bounds.Width,dlpscreen.Bounds.Height,UVDLPApp.Instance().m_buildparms);
