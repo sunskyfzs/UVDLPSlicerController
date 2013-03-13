@@ -1,3 +1,10 @@
+03/12/2013 Alpha 06 Release
+	Fixed tons of stuff
+	work on new slicer
+	better gui
+	added scene tree
+	Preliminary support for 3DLPrinter driver
+	
 02/28/2013 Alpha 05 
 	Fixed view controls
 	Improved slicing speed by ~25%
