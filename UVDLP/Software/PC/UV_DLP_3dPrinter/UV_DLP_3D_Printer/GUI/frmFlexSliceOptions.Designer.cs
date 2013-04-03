@@ -38,10 +38,10 @@
             this.dgModules = new System.Windows.Forms.DataGridView();
             this.Modules = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgParms = new System.Windows.Forms.DataGridView();
-            this.panel1 = new System.Windows.Forms.Panel();
             this.ParmName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ParmValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ParmDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.panel1 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.dgModules)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgParms)).BeginInit();
             this.SuspendLayout();
@@ -96,6 +96,7 @@
             // 
             // dgParms
             // 
+            this.dgParms.AllowUserToResizeRows = false;
             this.dgParms.BackgroundColor = System.Drawing.Color.White;
             dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
@@ -120,6 +121,7 @@
             this.dgParms.DefaultCellStyle = dataGridViewCellStyle6;
             this.dgParms.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgParms.Location = new System.Drawing.Point(199, 0);
+            this.dgParms.MultiSelect = false;
             this.dgParms.Name = "dgParms";
             dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
@@ -133,14 +135,6 @@
             this.dgParms.RowTemplate.Height = 24;
             this.dgParms.Size = new System.Drawing.Size(981, 563);
             this.dgParms.TabIndex = 4;
-            // 
-            // panel1
-            // 
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(199, 463);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(981, 100);
-            this.panel1.TabIndex = 5;
             // 
             // ParmName
             // 
@@ -168,6 +162,14 @@
             this.ParmDescription.HeaderText = "Description";
             this.ParmDescription.Name = "ParmDescription";
             this.ParmDescription.ReadOnly = true;
+            // 
+            // panel1
+            // 
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel1.Location = new System.Drawing.Point(199, 463);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(981, 100);
+            this.panel1.TabIndex = 5;
             // 
             // frmFlexSliceOptions
             // 

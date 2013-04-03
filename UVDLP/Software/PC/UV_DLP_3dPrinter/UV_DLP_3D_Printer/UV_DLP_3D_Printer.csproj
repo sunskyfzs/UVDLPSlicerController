@@ -71,6 +71,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="3DEngine\Camera.cs" />
+    <Compile Include="3DEngine\Cylinder3d.cs" />
+    <Compile Include="3DEngine\Plane.cs" />
+    <Compile Include="3DEngine\RTUtils.cs" />
     <Compile Include="Configs\AppConfig.cs" />
     <Compile Include="Configs\ConnectionConfig.cs" />
     <Compile Include="Configs\DeviceDriverConfig.cs" />
@@ -139,6 +142,7 @@
     <Compile Include="Slicing\SliceFile.cs" />
     <Compile Include="Slicing\Modules\SliceModule.cs" />
     <Compile Include="Slicing\Modules\SupportGen.cs" />
+    <Compile Include="SupportGenerator.cs" />
     <Compile Include="Utility\DebugLogger.cs" />
     <Compile Include="GUI\frmDLP.cs">
       <SubType>Form</SubType>

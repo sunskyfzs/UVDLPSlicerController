@@ -1,10 +1,16 @@
-object move/scale/rotate
-multiple object support
+
 support generation
 	2d/3d
 SVG import
 multiple config support
-	machine / slice profiles
+	slice profiles
 
 support for powder based printers
 
+click on objects to select
+
+show selected in different color
+
+GCode interpreter for 3DLPrinter
+
+additional controls for dlprinter

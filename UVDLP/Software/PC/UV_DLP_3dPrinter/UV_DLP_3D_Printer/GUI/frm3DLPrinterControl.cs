@@ -44,11 +44,11 @@ namespace UV_DLP_3D_Printer.GUI
         {
             try
             {
-                int numsteps = int.Parse(txtsteps.Text);
+                float mmdist = float.Parse(txtsteps.Text);
                 if (UVDLPApp.Instance().m_deviceinterface.Driver.DriverType == Drivers.eDriverType.eRF_3DLPRINTER)
                 {
                     RobotFactorySRL_3DLPrinter driver = (RobotFactorySRL_3DLPrinter)UVDLPApp.Instance().m_deviceinterface.Driver;
-                    driver.Move(RobotFactorySRL_3DLPrinter.eDirection.eUP, numsteps);
+                    driver.Move(RobotFactorySRL_3DLPrinter.eDirection.eUP, mmdist);
                 }
             }
             catch (Exception ex) 
@@ -59,11 +59,18 @@ namespace UV_DLP_3D_Printer.GUI
 
         private void cmdDown_Click(object sender, EventArgs e)
         {
-            int numsteps = int.Parse(txtsteps.Text);
-            if (UVDLPApp.Instance().m_deviceinterface.Driver.DriverType == Drivers.eDriverType.eRF_3DLPRINTER)
+            try
             {
-                RobotFactorySRL_3DLPrinter driver = (RobotFactorySRL_3DLPrinter)UVDLPApp.Instance().m_deviceinterface.Driver;
-                driver.Move(RobotFactorySRL_3DLPrinter.eDirection.eDOWN, numsteps);
+                float mmdist = float.Parse(txtsteps.Text);
+                if (UVDLPApp.Instance().m_deviceinterface.Driver.DriverType == Drivers.eDriverType.eRF_3DLPRINTER)
+                {
+                    RobotFactorySRL_3DLPrinter driver = (RobotFactorySRL_3DLPrinter)UVDLPApp.Instance().m_deviceinterface.Driver;
+                    driver.Move(RobotFactorySRL_3DLPrinter.eDirection.eDOWN, mmdist);
+                }
+            }
+            catch (Exception ex) 
+            {
+                DebugLogger.Instance().LogRecord(ex.Message);
             }
         }
     }

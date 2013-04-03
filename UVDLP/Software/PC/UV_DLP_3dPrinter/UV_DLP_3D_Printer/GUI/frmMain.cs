@@ -36,6 +36,7 @@ namespace UV_DLP_3D_Printer
         frmGCodeRaw m_sendgcode = new frmGCodeRaw();
         frmMachineProfileManager m_machineprofilemanager = new frmMachineProfileManager();
         eMOUSEMODE m_mousemode = eMOUSEMODE.eView;
+        Bitmap m_curslice = null; // this is used only for re-displaying the current slice.
 
         private bool lmdown, rmdown, mmdown;
         private int mdx, mdy;
@@ -60,6 +61,13 @@ namespace UV_DLP_3D_Printer
             SetMouseModeChecks();
             PopulateMachinesMenu();
             SetupSceneTree();
+            printDocument1.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(printDocument1_PrintPage);
+        }
+
+        void printDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
+        {
+            //throw new NotImplementedException();
+            // e.Graphics =  current slice graphics
         }
 
         private void PopulateMachinesMenu() 
@@ -117,36 +125,12 @@ namespace UV_DLP_3D_Printer
                     case eAppEvent.eGCodeSaved:
                         break;
                     case eAppEvent.eModelLoaded:
+                        ShowObjectInfo();
+                        DisplayFunc();
                         break;
                 }
             }
         }
-        /*
-        private void SetPrintButtonStatus() 
-        {
-            if (UVDLPApp.Instance().m_buildmgr.IsPrinting)
-            {
-                if (UVDLPApp.Instance().m_buildmgr.IsPaused())
-                {
-                    cmdBuild.Enabled = true;
-                    cmdStop.Enabled = true;
-                    cmdPause.Enabled = false;
-                }
-                else 
-                {
-                    cmdBuild.Enabled = false;
-                    cmdStop.Enabled = true;
-                    cmdPause.Enabled = true;                
-                }
-            }
-            else 
-            {
-                cmdBuild.Enabled = true;
-                cmdStop.Enabled = false;
-                cmdPause.Enabled = false;
-            }
-        }
-        */
         private void SetButtonStatuses() 
         {
             if (UVDLPApp.Instance().m_deviceinterface.Connected)
@@ -329,6 +313,7 @@ namespace UV_DLP_3D_Printer
                 // display info only if it's a normal layer
                 if (layertype == BuildManager.SLICE_NORMAL)
                 {
+                    
                     String txt = "Printing layer " + (layer + 1) + " of " + UVDLPApp.Instance().m_slicefile.m_slices.Count;
                     DebugLogger.Instance().LogRecord(txt);
                 }
@@ -389,10 +374,10 @@ namespace UV_DLP_3D_Printer
                 else 
                 {
                     chkWireframe.Checked = false;
-                    DisplayFunc();
+                    //DisplayFunc();
                     vScrollBar1.Maximum = 1;
                     vScrollBar1.Value = 0;
-                    ShowObjectInfo();
+                    //ShowObjectInfo();
                 }
             }
         }
@@ -428,9 +413,16 @@ namespace UV_DLP_3D_Printer
                 {
                     bmp = image;
                 }
+
+                if (layertype == BuildManager.SLICE_NORMAL)
+                {
+                    m_curslice = bmp;
+                }
+
                 //this bmp could be a normal, blank, or calibration image
                 picSlice.Image = bmp;//now show the 2d slice
                 m_frmdlp.ShowImage(bmp);
+                
                 //lblCurSlice.Text = "Layer = " +layer;
             }
             catch (Exception) { }
@@ -1277,11 +1269,70 @@ namespace UV_DLP_3D_Printer
 
         private void showCurrentToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (m_curslice != null) 
+            {
+                ShowDLPScreen();
+                m_frmdlp.ShowImage(m_curslice);
+            }
         }
 
         private void cmdPause_Click_1(object sender, EventArgs e)
         {
             UVDLPApp.Instance().m_buildmgr.PausePrint();
+        }
+
+        private void printToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Allow the user to choose the page range he or she would
+            // like to print.
+            printDialog1.AllowSomePages = true;
+
+            // Show the help button.
+            printDialog1.ShowHelp = true;
+
+            // Set the Document property to the PrintDocument for 
+            // which the PrintPage Event has been handled. To display the
+            // dialog, either this property or the PrinterSettings property 
+            // must be set 
+
+            //printDialog1.Document = docToPrint;
+
+            DialogResult result = printDialog1.ShowDialog();
+
+            // If the result is OK then print the document.
+            if (result == DialogResult.OK)
+            {
+                //docToPrint.Print();
+                printDocument1.Print();
+            }
+
+        }
+
+        private void saveSceneSTLToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (saveFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    //save the scene object
+                    UVDLPApp.Instance().CalcScene();
+                    UVDLPApp.Instance().Scene.SaveSTL_Binary(saveFileDialog1.FileName);
+                }
+            }
+            catch (Exception ex) 
+            {
+                DebugLogger.Instance().LogError(ex.Message);
+            }
+        }
+
+        private void addManualSupportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UVDLPApp.Instance().AddSupport();
+        }
+
+        private void addAutomaticSupportsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UVDLPApp.Instance().AddAutoSupports();
         }
     }
 }

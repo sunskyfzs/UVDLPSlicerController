@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UV_DLP_3D_Printer.Drivers;
-
+/*
+ This printer driver is used to control the Robot Factory 3DLPrinter
+ */
 namespace UV_DLP_3D_Printer.Device_Interface
 {
     public class RobotFactorySRL_3DLPrinter : GenericDriver
     {
+        private static int stepspermm = 320;
         public static int PC2MACHINE = 190;
         public static int MACHINE2PC = 180;
         private static int P1 = 2;
@@ -28,7 +31,7 @@ namespace UV_DLP_3D_Printer.Device_Interface
             eRequiresFirmwareVersion    = 4, //P1=Ver1 P2=Ver2 P3=Ver3
             eWriteStepsOffset           = 10, //Steps from the EEPROM
             eReadStepsOffset            = 11, // Steps
-            eSendLayerThickness         = 21, // P2 = H P3 = L
+            eSendLayerThickness         = 21, // P2 = H P3 = L in 10ths of mm
             eStartPrint                 = 22, // Steps standby P2=H P3=L
             eExposure                   = 23, // Time printing P2=H P3=L = sec /10
             eNextPrint                  = 25, // Steps down P2=H P3=L
@@ -41,6 +44,20 @@ namespace UV_DLP_3D_Printer.Device_Interface
         {
             eUP,
             eDOWN
+        }
+        private void CalcChecksum(ref byte[] data) 
+        {
+            int checksum=0;
+            byte checklow=0;
+            byte checkhigh=0;
+            for (int c = 0; c < 5; c++) 
+            {
+                checksum += data[c];
+            }
+            checklow =(byte)( checksum & 0xff);
+            checkhigh = (byte)((checksum >> 8) & 0xff);
+            data[5] = checkhigh;
+            data[6] = checklow;
         }
         public byte[] MakeCommand(eCommand command) 
         {
@@ -59,17 +76,20 @@ namespace UV_DLP_3D_Printer.Device_Interface
         {
             byte[] command = MakeCommand(eCommand.eContrast);
             command[P3] = (byte)val;
+            CalcChecksum(ref command);
             Write(command, command.Length);
         }
         public void SetBrightness(int val) 
         {
             byte[] command = MakeCommand(eCommand.eBrightness);
             command[P3] = (byte)val;
+            CalcChecksum(ref command);
             Write(command, command.Length);        
         }
-        public void Move(eDirection dir, int steps)
+        public void Move(eDirection dir, float mm)
         {
             byte[] command = null;
+            int steps = (int)(mm * stepspermm);
             switch (dir) 
             {
                 case eDirection.eUP:
@@ -83,6 +103,7 @@ namespace UV_DLP_3D_Printer.Device_Interface
             command[P1] = (byte)(0xff & (steps >> 16)); 
             command[P2] = (byte)(0xff & (steps >> 8)); 
             command[P3] = (byte)(0xff & steps);
+            CalcChecksum(ref command);
             Write(command, command.Length);   
         }
 

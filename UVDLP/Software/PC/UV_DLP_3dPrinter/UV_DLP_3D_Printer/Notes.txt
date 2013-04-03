@@ -24,7 +24,7 @@ GCode Generation:
 
 
 
-	 I need several structures to keep this all straight, I could simplify thingsm but I think
+	 I need several structures to keep this all straight, I could simplify things but I think
 	 it will bite me in the ass later if I do
 
 	 I need:
@@ -141,3 +141,8 @@ Zsteps per mm
 
 mm =in  / 0.039370
 
+
+Change everything to use relative sub-paths
+make the profiles backwards compatible
+-STL Save
+3DLPrinter notes:

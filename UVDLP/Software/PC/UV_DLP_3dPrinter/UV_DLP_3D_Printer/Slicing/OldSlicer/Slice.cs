@@ -78,7 +78,12 @@ namespace UV_DLP_3D_Printer
     {
         public int xmin, xmax, ymin, ymax; 
     }
-    public class Slice
+    /*
+     The idea in this class is to provide a single slice of a model
+     * This is represented 
+     */
+
+    public class Slice 
     {
         public ArrayList m_segments; // list of polyline segments
         
@@ -153,6 +158,9 @@ namespace UV_DLP_3D_Printer
             Point pnt1 = new Point(); // create some points for drawing
             Point pnt2 = new Point();
             Pen pen = new Pen(Color.White, 1);
+            //Brush
+            //Pen p2 = new Pen(
+            
             int hxres = sp.xres / 2;
             int hyres = sp.yres / 2;
 
@@ -164,7 +172,7 @@ namespace UV_DLP_3D_Printer
                 pnt1.Y = (int)(p1.y ) + sp.YOffset + hyres;
                 pnt2.X = (int)(p2.x ) + sp.XOffset + hxres;
                 pnt2.Y = (int)(p2.y ) + sp.YOffset + hyres;
-                
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
                 g.DrawLine(pen, pnt1, pnt2);       
             }
         }
@@ -200,6 +208,7 @@ namespace UV_DLP_3D_Printer
                 //    For a given pair of intersectin points
                 //    (Xi, Y), (Xj, Y)
                 //  −> Fill ceiling(Xi) to floor(Xj)
+                
                 if (points.Count % 2 == 0)  // is even
                 {
                     for (int cnt = 0; cnt < points.Count; cnt += 2)  // increment by 2
@@ -210,7 +219,7 @@ namespace UV_DLP_3D_Printer
                         pnt1.Y = (int)(p1.y + sp.YOffset + hyres);
                         pnt2.X = (int)(p2.x + sp.XOffset + hxres);
                         pnt2.Y = (int)(p2.y + sp.YOffset + hyres);
-
+                        graph.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
                         graph.DrawLine(pen, pnt1.X,pnt1.Y, pnt2.X,pnt2.Y);
                     }
                 }
@@ -285,11 +294,6 @@ namespace UV_DLP_3D_Printer
                 ln.p1.y = (int)(p3d1.y * sp.dpmmY);// +hyres;
                 ln.p2.x = (int)(p3d2.x * sp.dpmmX);// +hxres;
                 ln.p2.y = (int)(p3d2.y * sp.dpmmY);// +hyres;
-//                pnt1.X = (int)(p1.x * sp.dpmmX + sp.XOffset + hxres);
- //               pnt1.Y = (int)(p1.y * sp.dpmmY + sp.YOffset + hyres);
-   //             pnt2.X = (int)(p2.x * sp.dpmmX + sp.XOffset + hxres);
-     //           pnt2.Y = (int)(p2.y * sp.dpmmY + sp.YOffset + hyres);
-
                 lst.Add(ln);
             }
             return lst; // return the list

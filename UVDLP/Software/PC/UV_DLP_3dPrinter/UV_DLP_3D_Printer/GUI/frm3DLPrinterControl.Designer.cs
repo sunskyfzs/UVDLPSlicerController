@@ -29,18 +29,18 @@
         private void InitializeComponent()
         {
             this.grpProjector = new System.Windows.Forms.GroupBox();
-            this.numContrast = new System.Windows.Forms.NumericUpDown();
-            this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.numBrightness = new System.Windows.Forms.NumericUpDown();
+            this.label1 = new System.Windows.Forms.Label();
+            this.numContrast = new System.Windows.Forms.NumericUpDown();
             this.button1 = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.txtsteps = new System.Windows.Forms.TextBox();
             this.cmdDown = new System.Windows.Forms.Button();
             this.cmdUp = new System.Windows.Forms.Button();
             this.grpProjector.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numContrast)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numBrightness)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numContrast)).BeginInit();
             this.SuspendLayout();
             // 
             // grpProjector
@@ -55,28 +55,6 @@
             this.grpProjector.TabIndex = 0;
             this.grpProjector.TabStop = false;
             this.grpProjector.Text = "Projector Adjustment";
-            // 
-            // numContrast
-            // 
-            this.numContrast.Location = new System.Drawing.Point(97, 30);
-            this.numContrast.Name = "numContrast";
-            this.numContrast.Size = new System.Drawing.Size(120, 22);
-            this.numContrast.TabIndex = 0;
-            this.numContrast.Value = new decimal(new int[] {
-            75,
-            0,
-            0,
-            0});
-            this.numContrast.ValueChanged += new System.EventHandler(this.numContrast_ValueChanged);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 35);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(61, 17);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Contrast";
             // 
             // label2
             // 
@@ -100,6 +78,28 @@
             0});
             this.numBrightness.ValueChanged += new System.EventHandler(this.numBrightness_ValueChanged);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(7, 35);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(61, 17);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Contrast";
+            // 
+            // numContrast
+            // 
+            this.numContrast.Location = new System.Drawing.Point(97, 30);
+            this.numContrast.Name = "numContrast";
+            this.numContrast.Size = new System.Drawing.Size(120, 22);
+            this.numContrast.TabIndex = 0;
+            this.numContrast.Value = new decimal(new int[] {
+            75,
+            0,
+            0,
+            0});
+            this.numContrast.ValueChanged += new System.EventHandler(this.numContrast_ValueChanged);
+            // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(150, 311);
@@ -115,9 +115,9 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(418, 106);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(44, 17);
+            this.label3.Size = new System.Drawing.Size(30, 17);
             this.label3.TabIndex = 7;
-            this.label3.Text = "Steps";
+            this.label3.Text = "mm";
             // 
             // txtsteps
             // 
@@ -125,7 +125,7 @@
             this.txtsteps.Name = "txtsteps";
             this.txtsteps.Size = new System.Drawing.Size(72, 22);
             this.txtsteps.TabIndex = 6;
-            this.txtsteps.Text = "100";
+            this.txtsteps.Text = "10";
             this.txtsteps.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // cmdDown
@@ -164,8 +164,8 @@
             this.Text = "Robot Factory 3DLPrinter Control";
             this.grpProjector.ResumeLayout(false);
             this.grpProjector.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numContrast)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numBrightness)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numContrast)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

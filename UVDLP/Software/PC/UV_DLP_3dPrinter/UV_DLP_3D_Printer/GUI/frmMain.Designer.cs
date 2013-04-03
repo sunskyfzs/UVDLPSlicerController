@@ -72,6 +72,7 @@
             this.cmdLoad = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.cmdBuild = new System.Windows.Forms.ToolStripButton();
+            this.cmdPause = new System.Windows.Forms.ToolStripButton();
             this.cmdStop = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.cmdConnect = new System.Windows.Forms.ToolStripButton();
@@ -90,7 +91,10 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadBinarySTLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveSceneSTLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.printToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addManualSupportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.slicingOptionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.connectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -109,7 +113,10 @@
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cmdRemoveObject = new System.Windows.Forms.ToolStripMenuItem();
-            this.cmdPause = new System.Windows.Forms.ToolStripButton();
+            this.printDialog1 = new System.Windows.Forms.PrintDialog();
+            this.printDocument1 = new System.Drawing.Printing.PrintDocument();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.addAutomaticSupportsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -487,7 +494,7 @@
             this.txtGCode.Multiline = true;
             this.txtGCode.Name = "txtGCode";
             this.txtGCode.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtGCode.Size = new System.Drawing.Size(1164, 492);
+            this.txtGCode.Size = new System.Drawing.Size(1164, 494);
             this.txtGCode.TabIndex = 0;
             this.txtGCode.WordWrap = false;
             // 
@@ -496,7 +503,7 @@
             this.panel1.Controls.Add(this.cmdReloadGCode);
             this.panel1.Controls.Add(this.cmdSaveGCode);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(3, 495);
+            this.panel1.Location = new System.Drawing.Point(3, 497);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1164, 78);
             this.panel1.TabIndex = 1;
@@ -537,7 +544,7 @@
             this.picSlice.Dock = System.Windows.Forms.DockStyle.Fill;
             this.picSlice.Location = new System.Drawing.Point(0, 0);
             this.picSlice.Name = "picSlice";
-            this.picSlice.Size = new System.Drawing.Size(1170, 576);
+            this.picSlice.Size = new System.Drawing.Size(1170, 578);
             this.picSlice.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picSlice.TabIndex = 17;
             this.picSlice.TabStop = false;
@@ -602,6 +609,16 @@
             this.cmdBuild.Size = new System.Drawing.Size(52, 52);
             this.cmdBuild.Text = "Start Build";
             this.cmdBuild.Click += new System.EventHandler(this.cmdStartPrint_Click);
+            // 
+            // cmdPause
+            // 
+            this.cmdPause.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.cmdPause.Image = global::UV_DLP_3D_Printer.Properties.Resources.bfzn_003;
+            this.cmdPause.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.cmdPause.Name = "cmdPause";
+            this.cmdPause.Size = new System.Drawing.Size(52, 52);
+            this.cmdPause.Text = "Pause";
+            this.cmdPause.Click += new System.EventHandler(this.cmdPause_Click_1);
             // 
             // cmdStop
             // 
@@ -739,7 +756,11 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.loadBinarySTLToolStripMenuItem,
-            this.exitToolStripMenuItem});
+            this.saveSceneSTLToolStripMenuItem,
+            this.printToolStripMenuItem,
+            this.exitToolStripMenuItem,
+            this.addManualSupportToolStripMenuItem,
+            this.addAutomaticSupportsToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(40, 22);
             this.fileToolStripMenuItem.Text = "File";
@@ -747,16 +768,37 @@
             // loadBinarySTLToolStripMenuItem
             // 
             this.loadBinarySTLToolStripMenuItem.Name = "loadBinarySTLToolStripMenuItem";
-            this.loadBinarySTLToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.loadBinarySTLToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.loadBinarySTLToolStripMenuItem.Text = "Load Binary STL";
             this.loadBinarySTLToolStripMenuItem.Click += new System.EventHandler(this.loadBinarySTLToolStripMenuItem_Click);
+            // 
+            // saveSceneSTLToolStripMenuItem
+            // 
+            this.saveSceneSTLToolStripMenuItem.Name = "saveSceneSTLToolStripMenuItem";
+            this.saveSceneSTLToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
+            this.saveSceneSTLToolStripMenuItem.Text = "Save Scene STL";
+            this.saveSceneSTLToolStripMenuItem.Click += new System.EventHandler(this.saveSceneSTLToolStripMenuItem_Click);
+            // 
+            // printToolStripMenuItem
+            // 
+            this.printToolStripMenuItem.Name = "printToolStripMenuItem";
+            this.printToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
+            this.printToolStripMenuItem.Text = "Print";
+            this.printToolStripMenuItem.Click += new System.EventHandler(this.printToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
+            // addManualSupportToolStripMenuItem
+            // 
+            this.addManualSupportToolStripMenuItem.Name = "addManualSupportToolStripMenuItem";
+            this.addManualSupportToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
+            this.addManualSupportToolStripMenuItem.Text = "Add Manual Support";
+            this.addManualSupportToolStripMenuItem.Click += new System.EventHandler(this.addManualSupportToolStripMenuItem_Click);
             // 
             // viewToolStripMenuItem
             // 
@@ -903,15 +945,16 @@
             this.cmdRemoveObject.Text = "Remove Object";
             this.cmdRemoveObject.Click += new System.EventHandler(this.cmdRemoveObject_Click);
             // 
-            // cmdPause
+            // printDialog1
             // 
-            this.cmdPause.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.cmdPause.Image = global::UV_DLP_3D_Printer.Properties.Resources.bfzn_003;
-            this.cmdPause.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.cmdPause.Name = "cmdPause";
-            this.cmdPause.Size = new System.Drawing.Size(52, 52);
-            this.cmdPause.Text = "Pause";
-            this.cmdPause.Click += new System.EventHandler(this.cmdPause_Click_1);
+            this.printDialog1.UseEXDialog = true;
+            // 
+            // addAutomaticSupportsToolStripMenuItem
+            // 
+            this.addAutomaticSupportsToolStripMenuItem.Name = "addAutomaticSupportsToolStripMenuItem";
+            this.addAutomaticSupportsToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
+            this.addAutomaticSupportsToolStripMenuItem.Text = "Add Automatic Supports";
+            this.addAutomaticSupportsToolStripMenuItem.Click += new System.EventHandler(this.addAutomaticSupportsToolStripMenuItem_Click);
             // 
             // frmMain
             // 
@@ -1037,6 +1080,13 @@
         private System.Windows.Forms.ToolStripMenuItem hideToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showCurrentToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton cmdPause;
+        private System.Windows.Forms.ToolStripMenuItem printToolStripMenuItem;
+        private System.Windows.Forms.PrintDialog printDialog1;
+        private System.Drawing.Printing.PrintDocument printDocument1;
+        private System.Windows.Forms.ToolStripMenuItem saveSceneSTLToolStripMenuItem;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.ToolStripMenuItem addManualSupportToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addAutomaticSupportsToolStripMenuItem;
     }
 }
 

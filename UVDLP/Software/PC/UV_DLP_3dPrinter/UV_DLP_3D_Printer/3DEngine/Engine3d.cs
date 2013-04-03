@@ -155,5 +155,15 @@ namespace Engine3D
                 ply.Render(m_camera, e, wid, hei);
             }
         }
+        /*
+         This function takes the specified vector and intersects all objects
+         * in the scene, it will return the polygon? or point that intersects first
+         * We can expand this to return list of all intersections, for the initial
+         * purposes of support generation, this is used to go from z=0 to z=platmaxz
+         */
+        public void RayCast(Point3d pstart, Point3d pend) 
+        {
+        
+        }
     }
 }

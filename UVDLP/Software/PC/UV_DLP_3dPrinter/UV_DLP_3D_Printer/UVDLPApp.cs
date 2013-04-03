@@ -110,6 +110,19 @@ namespace UV_DLP_3D_Printer
                 return m_sceneobject;
             }
         }
+
+        public void AddAutoSupports()
+        {
+            SupportGenerator.GenerateSupportObjects(5, 5);
+        }
+        public void AddSupport() 
+        {
+            Cylinder3d cyl = new Cylinder3d();
+            cyl.Create(2.5, 1.5, 10, 15, 2);
+            m_engine3d.AddObject(cyl);
+            RaiseAppEvent(eAppEvent.eModelLoaded, "Model Created");
+        }
+
         public void MakeCurrent(Object3d obj)         
         {
         

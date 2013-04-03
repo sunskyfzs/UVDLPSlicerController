@@ -20,18 +20,20 @@ namespace Engine3D
         private string m_name; // just the filename
         public string m_fullname; // full path with filename
         private bool m_visible;
-        public Point3d m_min, m_max;
+        public Point3d m_min, m_max,m_center;
         public bool m_wireframe = false;
-
+        public double m_radius;
         public Object3d() 
         {
             m_lstpolys = new ArrayList();
             m_lstpoints = new ArrayList();
+            m_center = new Point3d();
             m_name = "Model";
             m_fullname = "Model";
             m_min = new Point3d();
             m_max = new Point3d();
             m_visible = true;
+            m_radius = 0.0;
         }
         public string Name { get { return m_name; } }
         public int NumPolys { get { return m_lstpolys.Count; } }
@@ -70,11 +72,8 @@ namespace Engine3D
                 p.x = p1.x;
                 p.y = p1.y;
                 p.z = p1.z;
-
-
             }
             Translate((float)center.x, (float)center.y, (float)center.z);
-            FindMinMax();        
         }
         public void Scale(float sf) 
         {
@@ -87,7 +86,6 @@ namespace Engine3D
                 p.z *= sf;
             }
             Translate((float)center.x, (float)center.y, 0);
-            FindMinMax();
         }
         public void Render() 
         {
@@ -209,6 +207,7 @@ namespace Engine3D
                          
                     }
                 }
+                Update();
                 return true;
             }
             catch (Exception) 
@@ -239,6 +238,26 @@ namespace Engine3D
             }
         
         }
+        /*
+         This is called after calccenter
+         * it iterates through all points and finds the one that is farthest away from the center point
+         */
+        public void CalcRadius() 
+        {
+            double maxdist = 0.0;
+            double td = 0.0;
+            foreach (Point3d p in m_lstpoints)
+            {
+                td = (p.x - m_center.x) * (p.x - m_center.x);
+                td += (p.y - m_center.y) * (p.y - m_center.y);
+                td += (p.z - m_center.z) * (p.z - m_center.z);
+                td = Math.Sqrt(td);
+                if (td >= maxdist)
+                    maxdist = td;
+            }
+            m_radius = maxdist;
+        }
+
         public Point3d CalcCenter() 
         {
             Point3d center = new Point3d();
@@ -255,9 +274,23 @@ namespace Engine3D
             center.y /= m_lstpoints.Count;
             center.z /= m_lstpoints.Count;
 
+            m_center.Set(center.x, center.y, center.z, 1.0);
             return center;
         }
-
+        /*
+         This function should be called after a move,scale,rotate
+         */
+        public void Update() 
+        {
+            //Update
+            CalcCenter();
+            CalcRadius();
+            FindMinMax();
+            foreach (Polygon p in m_lstpolys) 
+            {
+                p.Update();
+            }
+        }
         /*This cuntion adds the objects points and polygons to this one*/
         public void Add(Object3d obj) 
         {
@@ -269,8 +302,7 @@ namespace Engine3D
             {
                 m_lstpolys.Add(ply);
             }
-            CalcCenter();
-            FindMinMax();
+            Update();
         }
 
         /*Move the model in object space */
@@ -282,6 +314,7 @@ namespace Engine3D
                 p.y += y;
                 p.z += z;
             }
+            Update();
         }
         public bool LoadSTL(string filename) 
         {
@@ -307,7 +340,38 @@ namespace Engine3D
             UINT16 – Attribute byte count
             end         
              */
-
+        public bool SaveSTL_Binary(string filename) 
+        {
+            try
+            {
+                BinaryWriter bw = new BinaryWriter(File.Open(filename, FileMode.Create));
+                byte[] header = new byte[80];
+                //fill in the header
+                bw.Write(header, 0, 80);
+                bw.Write((uint)m_lstpolys.Count);
+                foreach (Polygon p in m_lstpolys) 
+                {
+                    //write the normal
+                    bw.Write((float)p.m_normal.x);
+                    bw.Write((float)p.m_normal.y);
+                    bw.Write((float)p.m_normal.z);
+                    foreach (Point3d pnt in p.m_points) 
+                    {
+                        bw.Write((float)pnt.x);
+                        bw.Write((float)pnt.y);
+                        bw.Write((float)pnt.z);
+                    }
+                    bw.Write((ushort)0); // 16 bit attribute
+                }
+                bw.Close();
+                return true;
+            }
+            catch (Exception ex) 
+            {
+                DebugLogger.Instance().LogError(ex.Message);
+                return false;
+            }
+        }
         public bool LoadSTL_Binary(string filename) 
         {
             BinaryReader br = null;
@@ -326,13 +390,7 @@ namespace Engine3D
                     p.m_normal.Load(br); // load the normal
                     p.m_points = new Point3d[3]; // create storage
                     for (int pc = 0; pc < 3; pc++) //iterate through the points
-                    {
-                        /*
-                        Point3d pnt = new Point3d();
-                        pnt.Load(br);
-                        p.m_points[pc] = AddUniqueVert(pnt);
-                        */
-                        
+                    {                       
                         p.m_points[pc] = new Point3d();
                         p.m_points[pc].Load(br);
                         m_lstpoints.Add(p.m_points[pc]);                       
