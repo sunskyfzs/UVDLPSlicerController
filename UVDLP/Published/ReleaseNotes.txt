@@ -1,3 +1,13 @@
+04/16/2013 Alpha 09 Release
+	Bug fixes
+	preliminary code support for Support generation
+	changed to relative paths
+	distributing multiple machine profiles
+	Added ability to save scene
+	line smoothing
+	Additional 3DLPrinter support
+	Slicing speed improvement
+
 03/12/2013 Alpha 06 Release
 	Fixed tons of stuff
 	work on new slicer

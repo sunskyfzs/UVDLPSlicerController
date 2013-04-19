@@ -45,6 +45,9 @@ namespace UV_DLP_3D_Printer.Device_Interface
             eUP,
             eDOWN
         }
+        /*This function calculates the checksum of the message
+         and stores it in data
+         */
         private void CalcChecksum(ref byte[] data) 
         {
             int checksum=0;
@@ -59,6 +62,10 @@ namespace UV_DLP_3D_Printer.Device_Interface
             data[5] = checkhigh;
             data[6] = checklow;
         }
+        /*
+         This function creates a new command buffer and assigns the
+         * command code
+         */
         public byte[] MakeCommand(eCommand command) 
         {
             byte []ret = new byte[7];
@@ -111,21 +118,58 @@ namespace UV_DLP_3D_Printer.Device_Interface
         {
             m_drivertype = eDriverType.eRF_3DLPRINTER;
         }
+        private bool IsCommentCommand(String line) 
+        {
+            if (line.Trim().Contains("(<")) 
+            {
+                return true;
+            }
+            return false;        
+        }
+        private bool IsGCode(String line) 
+        {            
+            if(line.ToUpper().Trim().StartsWith("G"))
+            {
+                return true;
+            }
+            return false;
+        }
+        private bool IsMCode(String line)
+        {
+            if (line.ToUpper().Trim().StartsWith("M"))
+            {
+                return true;
+            }
+            return false;
+        }
 
-        public override int Write(String line)
+        /*This function interprets GCode lines written 
+         to this device driver. These GCode lines and comment lines
+         * contain commands that are interpreted here into commands for the 
+         * 3DLPrinter via the 7 byte command structure
+         
+         */
+        public int InterpretGCodeLine(String line) 
         {
             // we need a gcode simple interpreter here that
             //can take the G1 Z commands, and translate them into movement commands
-           // m_serialport.Write(line);
             // we should also parse for the layer number and delay commands
-           // return line.Length;
-            if (line.Trim().ToUpper().StartsWith("G1")) 
+            // return line.Length;
+
+            try 
             {
-                // interpret this as a move command
-                string []lines = line.Trim().Split(' ');
-                // look for a z on the line
+            
             }
-            return -1;
+            catch (Exception ex) 
+            {
+                DebugLogger.Instance().LogError(ex.Message);
+            }
+            return 1;
+        }
+
+        public override int Write(String line)
+        {
+            return InterpretGCodeLine(line);
         }
     }
 }

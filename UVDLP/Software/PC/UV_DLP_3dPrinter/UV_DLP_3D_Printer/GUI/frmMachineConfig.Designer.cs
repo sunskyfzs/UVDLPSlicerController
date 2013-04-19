@@ -49,7 +49,11 @@
             this.grpDriver = new System.Windows.Forms.GroupBox();
             this.lstDrivers = new System.Windows.Forms.ListBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.txtXFeed = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.txtZFeed = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.txtYFeed = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.Monitors.SuspendLayout();
@@ -58,7 +62,7 @@
             // 
             // cmdOK
             // 
-            this.cmdOK.Location = new System.Drawing.Point(125, 433);
+            this.cmdOK.Location = new System.Drawing.Point(119, 478);
             this.cmdOK.Name = "cmdOK";
             this.cmdOK.Size = new System.Drawing.Size(92, 38);
             this.cmdOK.TabIndex = 0;
@@ -68,7 +72,7 @@
             // 
             // cmdCancel
             // 
-            this.cmdCancel.Location = new System.Drawing.Point(228, 433);
+            this.cmdCancel.Location = new System.Drawing.Point(222, 478);
             this.cmdCancel.Name = "cmdCancel";
             this.cmdCancel.Size = new System.Drawing.Size(92, 38);
             this.cmdCancel.TabIndex = 1;
@@ -255,23 +259,61 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(178, 17);
             this.label4.TabIndex = 37;
-            this.label4.Text = "Z Axis Feed Rate (mm/min)";
+            this.label4.Text = "X Axis Feed Rate (mm/min)";
+            // 
+            // txtXFeed
+            // 
+            this.txtXFeed.Location = new System.Drawing.Point(15, 376);
+            this.txtXFeed.Name = "txtXFeed";
+            this.txtXFeed.Size = new System.Drawing.Size(100, 22);
+            this.txtXFeed.TabIndex = 36;
+            this.txtXFeed.Text = "20";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(12, 410);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(178, 17);
+            this.label7.TabIndex = 39;
+            this.label7.Text = "Z Axis Feed Rate (mm/min)";
             // 
             // txtZFeed
             // 
-            this.txtZFeed.Location = new System.Drawing.Point(15, 376);
+            this.txtZFeed.Location = new System.Drawing.Point(15, 430);
             this.txtZFeed.Name = "txtZFeed";
             this.txtZFeed.Size = new System.Drawing.Size(100, 22);
-            this.txtZFeed.TabIndex = 36;
+            this.txtZFeed.TabIndex = 38;
             this.txtZFeed.Text = "20";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(219, 356);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(178, 17);
+            this.label8.TabIndex = 41;
+            this.label8.Text = "Y Axis Feed Rate (mm/min)";
+            // 
+            // txtYFeed
+            // 
+            this.txtYFeed.Location = new System.Drawing.Point(222, 376);
+            this.txtYFeed.Name = "txtYFeed";
+            this.txtYFeed.Size = new System.Drawing.Size(100, 22);
+            this.txtYFeed.TabIndex = 40;
+            this.txtYFeed.Text = "20";
             // 
             // frmMachineConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(469, 488);
-            this.Controls.Add(this.label4);
+            this.ClientSize = new System.Drawing.Size(469, 528);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.txtYFeed);
+            this.Controls.Add(this.label7);
             this.Controls.Add(this.txtZFeed);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.txtXFeed);
             this.Controls.Add(this.grpDriver);
             this.Controls.Add(this.Monitors);
             this.Controls.Add(this.groupBox2);
@@ -322,6 +364,10 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtPlatTall;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox txtXFeed;
+        private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox txtZFeed;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TextBox txtYFeed;
     }
 }

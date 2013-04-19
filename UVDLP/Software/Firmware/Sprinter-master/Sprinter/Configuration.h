@@ -32,7 +32,7 @@
 
 //// Calibration variables
 // X, Y, Z, E steps per unit - Metric Prusa Mendel with Wade extruder:
-#define _AXIS_STEP_PER_UNIT {80, 80, 1136.3636,700}
+#define _AXIS_STEP_PER_UNIT {1136.3636, 80, 1136.3636,700}
 // Metric Prusa Mendel with Makergear geared stepper extruder:
 //#define _AXIS_STEP_PER_UNIT {80,80,3200/1.25,1380}
 // MakerGear Hybrid Prusa Mendel:
@@ -45,7 +45,7 @@
 // The pullups are needed if you directly connect a mechanical endswitch between the signal and ground pins.
 //If your axes are only moving in one direction, make sure the endstops are connected properly.
 //If your axes move in one direction ONLY when the endstops are triggered, set [XYZ]_ENDSTOP_INVERT to true here:
-const bool X_ENDSTOP_INVERT = false;
+const bool X_ENDSTOP_INVERT = true;
 const bool Y_ENDSTOP_INVERT = false;
 const bool Z_ENDSTOP_INVERT = true;
 

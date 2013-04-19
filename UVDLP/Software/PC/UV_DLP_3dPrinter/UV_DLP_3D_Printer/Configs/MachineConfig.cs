@@ -25,6 +25,8 @@ namespace UV_DLP_3D_Printer
         public double m_PlatZSize; // the Z size of the Z axis length in mm
         private double m_Xpixpermm; // the calculated pixels per mm
         private double m_Ypixpermm; // the calculated pixels per mm
+        private double m_XMaxFeedrate;// in mm/min 
+        private double m_YMaxFeedrate;// in mm/min 
         private double m_ZMaxFeedrate;// in mm/min 
 
 
@@ -59,6 +61,8 @@ namespace UV_DLP_3D_Printer
                 m_PlatZSize = double.Parse(xr.ReadElementString("PlatformZSize"));
                 m_Xpixpermm = double.Parse(xr.ReadElementString("PixPermmX"));
                 m_Ypixpermm = double.Parse(xr.ReadElementString("PixPermmY"));
+                m_XMaxFeedrate = double.Parse(xr.ReadElementString("MaxXFeedRate"));
+                m_YMaxFeedrate = double.Parse(xr.ReadElementString("MaxYFeedRate"));
                 m_ZMaxFeedrate = double.Parse(xr.ReadElementString("MaxZFeedRate"));
                 m_monitorid = xr.ReadElementString("MonitorID");
                 CalcPixPerMM();
@@ -94,6 +98,8 @@ namespace UV_DLP_3D_Printer
                         xw.WriteElementString("PlatformZSize", m_PlatZSize.ToString());
                         xw.WriteElementString("PixPermmX", m_Xpixpermm.ToString());
                         xw.WriteElementString("PixPermmY", m_Ypixpermm.ToString());
+                        xw.WriteElementString("MaxXFeedRate", m_XMaxFeedrate.ToString());
+                        xw.WriteElementString("MaxYFeedRate", m_YMaxFeedrate.ToString());
                         xw.WriteElementString("MaxZFeedRate", m_ZMaxFeedrate.ToString());
                         xw.WriteElementString("MonitorID", m_monitorid.ToString());
                         if (m_driverconfig.Save(xw))
@@ -118,6 +124,8 @@ namespace UV_DLP_3D_Printer
             m_PlatXSize = 102.0;
             m_PlatYSize = 77.0;
             m_PlatZSize = 100; // 100 mm default, we have to load this
+            m_XMaxFeedrate = 100;
+            m_YMaxFeedrate = 100;
             m_ZMaxFeedrate = 100;
             m_monitorid = "";
             CalcPixPerMM();
@@ -149,6 +157,16 @@ namespace UV_DLP_3D_Printer
         public double PixPerMMY { get { return m_Ypixpermm; } }
         public int XRes { get { return (int)m_XDLPRes; } }
         public int YRes { get { return (int)m_YDLPRes; } }
+        public double XMaxFeedrate
+        {
+            get { return m_XMaxFeedrate; }
+            set { m_XMaxFeedrate = value; }
+        }
+        public double YMaxFeedrate
+        {
+            get { return m_YMaxFeedrate; }
+            set { m_YMaxFeedrate = value; }
+        }
         public double ZMaxFeedrate
         {
             get { return m_ZMaxFeedrate; }

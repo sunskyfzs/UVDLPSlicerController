@@ -31,7 +31,7 @@ namespace UV_DLP_3D_Printer
         private static UVDLPApp m_instance = null;
         public String m_PathMachines;
         public String m_PathProfiles;
-        public String m_apppath;
+       // public String m_apppath;
         // the current application configuration object
         public AppConfig m_appconfig;
         public string appcofnginame; // the full filename
@@ -323,12 +323,20 @@ namespace UV_DLP_3D_Printer
         public void SetupDriver() 
         {
             DebugLogger.Instance().LogRecord("Changing driver type to " + m_printerinfo.m_driverconfig.m_drivertype.ToString());
+            if (m_deviceinterface.Driver != null) 
+            {
+                if (m_deviceinterface.Driver.Connected == true) 
+                {
+                    // be sure to close the old driver to play nice
+                    m_deviceinterface.Driver.Disconnect();
+                }
+            }
             m_deviceinterface.Driver = DriverFactory.Create(m_printerinfo.m_driverconfig.m_drivertype);
         }
 
         public void DoAppStartup() 
         {
-            m_apppath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            //m_apppath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             //get the path separater 
             if (RunningPlatform() == Platform.Windows)
             {
@@ -339,8 +347,10 @@ namespace UV_DLP_3D_Printer
                 m_pathsep = "/";
             }
             // define some default paths
-            m_PathMachines = m_apppath + "\\Machines";
-            m_PathProfiles = m_apppath + "\\Profiles";
+//            m_PathMachines = m_apppath + "\\Machines";
+  //          m_PathProfiles = m_apppath + "\\Profiles";
+            m_PathMachines = "." + m_pathsep +  "Machines";
+            m_PathProfiles = "." + m_pathsep + "Profiles";
 
             // set up directories if they don't exist
             if (!Directory.Exists(m_PathMachines)) 
@@ -352,10 +362,17 @@ namespace UV_DLP_3D_Printer
                 Utility.CreateDirectory(m_PathProfiles);
             }
             // load the current application configuration
+            /*
             if (!m_appconfig.Load(m_apppath + m_pathsep + m_appconfigname))
             {
                 m_appconfig.CreateDefault();
                 m_appconfig.Save(m_apppath + m_pathsep + m_appconfigname);
+            }
+            */
+            if (!m_appconfig.Load("." + m_pathsep + m_appconfigname))
+            {
+                m_appconfig.CreateDefault();
+                m_appconfig.Save("." + m_pathsep + m_appconfigname);
             }
 
             //load the current machine configuration file

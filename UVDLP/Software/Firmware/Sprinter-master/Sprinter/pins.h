@@ -446,8 +446,8 @@
 
 #ifdef RAMPS_V_1_3
 
-#define X_STEP_PIN         54
-#define X_DIR_PIN          55
+#define X_STEP_PIN         44//54 smhzc
+#define X_DIR_PIN          42//55 smhzc changed
 #define X_ENABLE_PIN       38
 #define X_MIN_PIN           3
 #define X_MAX_PIN          -1   //2 //Max endstops default to disabled "-1", set to commented value to enable.

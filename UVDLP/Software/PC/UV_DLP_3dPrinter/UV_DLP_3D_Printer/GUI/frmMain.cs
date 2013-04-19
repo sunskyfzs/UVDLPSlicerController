@@ -8,8 +8,10 @@ using System.Text;
 using System.Windows.Forms;
 using Engine3D;
 using OpenTK.Graphics;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Platform.Windows;
+//using OpenTK.Graphics.OpenGL;
 using System.IO.Ports;
 using System.IO;
 using System.Collections;
@@ -564,6 +566,8 @@ namespace UV_DLP_3D_Printer
             if (e.Button == MouseButtons.Middle)
             {
                 mmdown = true;
+                // try to hit-test objects in scene here.
+                HitTestScene(mdx, mdy);
             }
             
             if (e.Button == MouseButtons.Left)
@@ -575,10 +579,52 @@ namespace UV_DLP_3D_Printer
             {
                 rmdown = true;
             }
-
-
         }
+        // functions:
+        public Point convertScreenToWorldCoords(int x, int y)
+        {
+            int[] viewport = new int[4];
+            Matrix4 modelViewMatrix, projectionMatrix;
+            GL.GetFloat(GetPName.ModelviewMatrix, out modelViewMatrix);
+            GL.GetFloat(GetPName.ProjectionMatrix, out projectionMatrix);
+            GL.GetInteger(GetPName.Viewport, viewport);
+            Vector2 mouse;
+            mouse.X = x;
+            //mouse.Y = viewport[3] - y;
+            mouse.Y = y + (ClientRectangle.Height - glControl1.Size.Height);
+            Vector4 vector = UnProject(ref projectionMatrix, modelViewMatrix, new Size(viewport[2], viewport[3]), mouse);
+            Point coords = new Point((int)vector.X, (int)vector.Y);
+            return coords;
+        }
+        public Vector4 UnProject(ref Matrix4 projection, Matrix4 view, Size viewport, Vector2 mouse)
+        {
+            Vector4 vec;
 
+            vec.X = 2.0f * mouse.X / (float)viewport.Width - 1;
+            vec.Y = -(2.0f * mouse.Y / (float)viewport.Height - 1);
+            vec.Z = 0;
+            vec.W = 1.0f;
+
+            Matrix4 viewInv = Matrix4.Invert(view);
+            Matrix4 projInv = Matrix4.Invert(projection);
+
+            Vector4.Transform(ref vec, ref projInv, out vec);
+            Vector4.Transform(ref vec, ref viewInv, out vec);
+
+            if (vec.W > float.Epsilon || vec.W < float.Epsilon)
+            {
+                vec.X /= vec.W;
+                vec.Y /= vec.W;
+                vec.Z /= vec.W;
+            }
+
+            return vec;
+        }
+        private void HitTestScene(int x, int y) 
+        {
+            //GL.u
+            Point pnt = convertScreenToWorldCoords(x, y);
+        }
         private void glControl1_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Middle)
@@ -1199,6 +1245,7 @@ namespace UV_DLP_3D_Printer
                 if (pn.Equals(newprof)) 
                 {
                     UVDLPApp.Instance().LoadMachineConfig(filePaths[idx]);
+                    UVDLPApp.Instance().SetupDriver();
                     PopulateMachinesMenu();
                     break;
                 }

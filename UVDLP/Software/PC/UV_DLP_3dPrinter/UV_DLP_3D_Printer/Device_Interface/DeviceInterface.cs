@@ -104,7 +104,8 @@ namespace UV_DLP_3D_Printer
                 if (m_driver != null)
                 {
                     DeviceDriver olddriver = m_driver;
-                    olddriver.Disconnect(); // disconnect the old driver
+                    if(olddriver.Connected == true)
+                        olddriver.Disconnect(); // disconnect the old driver
                     //remove the old device driver delegates
                     olddriver.DataReceived -= new DeviceDriver.DataReceivedEvent(DriverDataReceivedEvent);
                     olddriver.DeviceStatus -= new DeviceDriver.DeviceStatusEvent(DriverDeviceStatusEvent);
@@ -190,9 +191,31 @@ namespace UV_DLP_3D_Printer
             String command = "G1 Z" + zpos + " F" + rate + "\r\n";
             SendCommandToDevice("G91\r\n"); 
             SendCommandToDevice(command);
-            SendCommandToDevice("G90\r\n");
-            
+            SendCommandToDevice("G90\r\n");            
         }
+        /*
+         This function moves the X (Tilt/Slide) axis to by the distance in mm 
+         * at the specified feed rate
+         */
+        public void MoveX(double xpos, double rate)
+        {
+            String command = "G1 X" + xpos + " F" + rate + "\r\n";
+            SendCommandToDevice("G91\r\n");
+            SendCommandToDevice(command);
+            SendCommandToDevice("G90\r\n");
+        }
+        /*
+         This function moves the Y (Tilt/Slide) axis to by the distance in mm 
+         * at the specified feed rate
+         */
+        public void MoveY(double ypos, double rate)
+        {
+            String command = "G1 Y" + ypos + " F" + rate + "\r\n";
+            SendCommandToDevice("G91\r\n");
+            SendCommandToDevice(command);
+            SendCommandToDevice("G90\r\n");
+        }
+
 
         /*
          This function stops all movement and motion

@@ -21,7 +21,6 @@ namespace UV_DLP_3D_Printer.GUI
             try
             {
                 double dist = double.Parse(txtdist.Text);
-                //String movecommand = "G1 Z" + dist.ToString() + "\r\n";
                 UVDLPApp.Instance().m_deviceinterface.Move(dist, UVDLPApp.Instance().m_printerinfo.ZMaxFeedrate); // (movecommand);
             }
             catch (Exception ex) 
@@ -37,8 +36,6 @@ namespace UV_DLP_3D_Printer.GUI
             {
                 double dist = double.Parse(txtdist.Text);
                 dist = dist * -1.0;
-                String movecommand = "G1 Z" + dist.ToString() + "\r\n";
-                //UVDLPApp.Instance().m_deviceinterface.SendCommandToDevice(movecommand);
                 UVDLPApp.Instance().m_deviceinterface.Move(dist, UVDLPApp.Instance().m_printerinfo.ZMaxFeedrate); //
             }
             catch (Exception ex)
@@ -46,6 +43,66 @@ namespace UV_DLP_3D_Printer.GUI
                 DebugLogger.Instance().LogRecord(ex.Message);
                 MessageBox.Show("Please check input parameters\r\n" + ex.Message, "Input Error");
             }
+        }
+
+        private void cmdXUp_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                double dist = double.Parse(txtdistX.Text);
+                UVDLPApp.Instance().m_deviceinterface.MoveX(dist, UVDLPApp.Instance().m_printerinfo.XMaxFeedrate); //
+            }
+            catch (Exception ex)
+            {
+                DebugLogger.Instance().LogRecord(ex.Message);
+                MessageBox.Show("Please check input parameters\r\n" + ex.Message, "Input Error");
+            }
+        }
+
+        private void cmdXDown_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                double dist = double.Parse(txtdistX.Text);
+                dist = dist * -1.0;
+                UVDLPApp.Instance().m_deviceinterface.MoveX(dist, UVDLPApp.Instance().m_printerinfo.XMaxFeedrate); //
+            }
+            catch (Exception ex)
+            {
+                DebugLogger.Instance().LogRecord(ex.Message);
+                MessageBox.Show("Please check input parameters\r\n" + ex.Message, "Input Error");
+            }
+        }
+
+        private void cmdYUp_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                double dist = double.Parse(txtdistY.Text);
+                UVDLPApp.Instance().m_deviceinterface.MoveY(dist, UVDLPApp.Instance().m_printerinfo.YMaxFeedrate); //
+            }
+            catch (Exception ex)
+            {
+                DebugLogger.Instance().LogRecord(ex.Message);
+                MessageBox.Show("Please check input parameters\r\n" + ex.Message, "Input Error");
+            }
+
+        }
+
+        private void cmdYDown_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                double dist = double.Parse(txtdistY.Text);
+                dist = dist * -1.0;
+                UVDLPApp.Instance().m_deviceinterface.MoveY(dist, UVDLPApp.Instance().m_printerinfo.YMaxFeedrate); //
+            }
+            catch (Exception ex)
+            {
+                DebugLogger.Instance().LogRecord(ex.Message);
+                MessageBox.Show("Please check input parameters\r\n" + ex.Message, "Input Error");
+            }
+
         }
     }
 }

@@ -48,6 +48,8 @@ namespace UV_DLP_3D_Printer
                 txtPlatTall.Text = m_config.m_PlatZSize.ToString();
                 projwidth.Text = "" + m_config.XRes;
                 projheight.Text = "" + m_config.YRes;
+                txtXFeed.Text = m_config.XMaxFeedrate.ToString();
+                txtYFeed.Text = m_config.YMaxFeedrate.ToString();
                 txtZFeed.Text = m_config.ZMaxFeedrate.ToString();
                 //select the current monitor
                 int idx = 0;
@@ -83,6 +85,8 @@ namespace UV_DLP_3D_Printer
                 m_config.m_PlatZSize = double.Parse(txtPlatTall.Text);
                 m_config.m_XDLPRes = double.Parse(projwidth.Text);
                 m_config.m_YDLPRes = double.Parse(projheight.Text);
+                m_config.XMaxFeedrate = double.Parse(txtXFeed.Text);
+                m_config.YMaxFeedrate = double.Parse(txtYFeed.Text);
                 m_config.ZMaxFeedrate = double.Parse(txtZFeed.Text);
                 m_config.CalcPixPerMM();
                 if (lstMonitors.SelectedIndex != -1)

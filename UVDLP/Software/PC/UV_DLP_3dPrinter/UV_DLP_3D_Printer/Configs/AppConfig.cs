@@ -20,7 +20,7 @@ namespace UV_DLP_3D_Printer
         public void CreateDefault() 
         {
             m_cursliceprofilename = UVDLPApp.Instance().m_PathProfiles + UVDLPApp.m_pathsep + "default.slicing";
-            m_curmachineeprofilename = UVDLPApp.Instance().m_PathMachines + UVDLPApp.m_pathsep + "default.machine";
+            m_curmachineeprofilename = UVDLPApp.Instance().m_PathMachines + UVDLPApp.m_pathsep + "NullMachine.machine";
             m_LastModelFilename = "";
             m_loadlastmodel = true;
            // m_drivertype = eDriverType.eNULL_DRIVER;

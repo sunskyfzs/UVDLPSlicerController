@@ -95,6 +95,7 @@
             this.printToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addManualSupportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addAutomaticSupportsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.slicingOptionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.connectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -116,7 +117,6 @@
             this.printDialog1 = new System.Windows.Forms.PrintDialog();
             this.printDocument1 = new System.Drawing.Printing.PrintDocument();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.addAutomaticSupportsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -795,10 +795,19 @@
             // 
             // addManualSupportToolStripMenuItem
             // 
+            this.addManualSupportToolStripMenuItem.Enabled = false;
             this.addManualSupportToolStripMenuItem.Name = "addManualSupportToolStripMenuItem";
             this.addManualSupportToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.addManualSupportToolStripMenuItem.Text = "Add Manual Support";
             this.addManualSupportToolStripMenuItem.Click += new System.EventHandler(this.addManualSupportToolStripMenuItem_Click);
+            // 
+            // addAutomaticSupportsToolStripMenuItem
+            // 
+            this.addAutomaticSupportsToolStripMenuItem.Enabled = false;
+            this.addAutomaticSupportsToolStripMenuItem.Name = "addAutomaticSupportsToolStripMenuItem";
+            this.addAutomaticSupportsToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
+            this.addAutomaticSupportsToolStripMenuItem.Text = "Add Automatic Supports";
+            this.addAutomaticSupportsToolStripMenuItem.Click += new System.EventHandler(this.addAutomaticSupportsToolStripMenuItem_Click);
             // 
             // viewToolStripMenuItem
             // 
@@ -948,13 +957,6 @@
             // printDialog1
             // 
             this.printDialog1.UseEXDialog = true;
-            // 
-            // addAutomaticSupportsToolStripMenuItem
-            // 
-            this.addAutomaticSupportsToolStripMenuItem.Name = "addAutomaticSupportsToolStripMenuItem";
-            this.addAutomaticSupportsToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
-            this.addAutomaticSupportsToolStripMenuItem.Text = "Add Automatic Supports";
-            this.addAutomaticSupportsToolStripMenuItem.Click += new System.EventHandler(this.addAutomaticSupportsToolStripMenuItem_Click);
             // 
             // frmMain
             // 
