@@ -118,6 +118,10 @@ namespace UV_DLP_3D_Printer.Device_Interface
         {
             m_drivertype = eDriverType.eRF_3DLPRINTER;
         }
+
+        /*
+         Returns true if this is 1) a comment line and 2) a command embedded in comment
+         */
         private bool IsCommentCommand(String line) 
         {
             if (line.Trim().Contains("(<")) 
@@ -126,18 +130,30 @@ namespace UV_DLP_3D_Printer.Device_Interface
             }
             return false;        
         }
+
+        /*
+         This gets the current gcode from the line
+         */
+        private int GetGCode(String line) 
+        {
+            int retval = -1;
+            return retval;
+        }
         private bool IsGCode(String line) 
         {            
             if(line.ToUpper().Trim().StartsWith("G"))
             {
+                //check and see if the next prtion after the g is a numeric code
                 return true;
             }
             return false;
         }
+
         private bool IsMCode(String line)
         {
             if (line.ToUpper().Trim().StartsWith("M"))
             {
+                // check and se eif the next char is a number
                 return true;
             }
             return false;
@@ -155,10 +171,39 @@ namespace UV_DLP_3D_Printer.Device_Interface
             //can take the G1 Z commands, and translate them into movement commands
             // we should also parse for the layer number and delay commands
             // return line.Length;
-
+            /*     * 
+     * G1 - Coordinated Motion
+     * G28 - Home given Axes to maximum
+     * G92 - Define current position on axes
+     * */
             try 
             {
-            
+                if (IsGCode(line)) 
+                {
+                    switch (GetGCode(line)) 
+                    {
+                        case -1: // maybe an error
+                            break;
+                        case 1: // G1 - Coordinated Motion
+                            //send the move command
+                            break;
+                        case 28:  // G28 -  Home given Axes to maximum
+                            break;
+                        case 92:  // G92 - Define current position on axes
+                            break;
+
+                    }
+                    // get the x,y,z parms
+                    // Get the feed rate
+                }
+                else if (IsMCode(line)) 
+                {
+
+                }
+                else if (IsCommentCommand(line)) 
+                {
+                    
+                }
             }
             catch (Exception ex) 
             {
