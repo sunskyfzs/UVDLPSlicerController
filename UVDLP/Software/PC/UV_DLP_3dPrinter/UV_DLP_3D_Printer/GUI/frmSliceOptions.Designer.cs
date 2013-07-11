@@ -53,13 +53,15 @@
             this.cmbBuildDirection = new System.Windows.Forms.ComboBox();
             this.txtnumbottom = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.txtRaiseTime = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // chkExportSlices
             // 
             this.chkExportSlices.AutoSize = true;
-            this.chkExportSlices.Location = new System.Drawing.Point(21, 245);
+            this.chkExportSlices.Location = new System.Drawing.Point(21, 285);
             this.chkExportSlices.Name = "chkExportSlices";
             this.chkExportSlices.Size = new System.Drawing.Size(153, 21);
             this.chkExportSlices.TabIndex = 21;
@@ -68,7 +70,7 @@
             // 
             // cmdOK
             // 
-            this.cmdOK.Location = new System.Drawing.Point(36, 306);
+            this.cmdOK.Location = new System.Drawing.Point(36, 346);
             this.cmdOK.Name = "cmdOK";
             this.cmdOK.Size = new System.Drawing.Size(129, 41);
             this.cmdOK.TabIndex = 24;
@@ -79,7 +81,7 @@
             // chkgengcode
             // 
             this.chkgengcode.AutoSize = true;
-            this.chkgengcode.Location = new System.Drawing.Point(21, 218);
+            this.chkgengcode.Location = new System.Drawing.Point(21, 258);
             this.chkgengcode.Name = "chkgengcode";
             this.chkgengcode.Size = new System.Drawing.Size(138, 21);
             this.chkgengcode.TabIndex = 25;
@@ -124,7 +126,7 @@
             // 
             this.chkexportsvg.AutoSize = true;
             this.chkexportsvg.Enabled = false;
-            this.chkexportsvg.Location = new System.Drawing.Point(21, 272);
+            this.chkexportsvg.Location = new System.Drawing.Point(21, 312);
             this.chkexportsvg.Name = "chkexportsvg";
             this.chkexportsvg.Size = new System.Drawing.Size(144, 21);
             this.chkexportsvg.TabIndex = 30;
@@ -133,7 +135,7 @@
             // 
             // cmdCancel
             // 
-            this.cmdCancel.Location = new System.Drawing.Point(171, 306);
+            this.cmdCancel.Location = new System.Drawing.Point(171, 346);
             this.cmdCancel.Name = "cmdCancel";
             this.cmdCancel.Size = new System.Drawing.Size(129, 41);
             this.cmdCancel.TabIndex = 31;
@@ -146,9 +148,9 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(20, 101);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(205, 17);
+            this.label2.Size = new System.Drawing.Size(229, 17);
             this.label2.TabIndex = 33;
-            this.label2.Text = "First Layer Exposure Time (ms)";
+            this.label2.Text = "Bottom Layers Exposure Time (ms)";
             // 
             // txtFirstLayerTime
             // 
@@ -273,11 +275,30 @@
             this.label8.TabIndex = 42;
             this.label8.Text = "# Layers";
             // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(20, 193);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(151, 17);
+            this.label9.TabIndex = 44;
+            this.label9.Text = "Layer Raise Time (ms)";
+            // 
+            // txtRaiseTime
+            // 
+            this.txtRaiseTime.Location = new System.Drawing.Point(21, 215);
+            this.txtRaiseTime.Name = "txtRaiseTime";
+            this.txtRaiseTime.Size = new System.Drawing.Size(56, 22);
+            this.txtRaiseTime.TabIndex = 43;
+            this.txtRaiseTime.Text = "750";
+            // 
             // frmSliceOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(614, 361);
+            this.ClientSize = new System.Drawing.Size(632, 422);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.txtRaiseTime);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.txtnumbottom);
             this.Controls.Add(this.cmbBuildDirection);
@@ -339,5 +360,7 @@
         private System.Windows.Forms.ComboBox cmbBuildDirection;
         private System.Windows.Forms.TextBox txtnumbottom;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox txtRaiseTime;
     }
 }

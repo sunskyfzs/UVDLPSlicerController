@@ -66,7 +66,7 @@ namespace UV_DLP_3D_Printer
             String firstlayerdelay = "(<Delay> " + sf.m_config.firstlayertime_ms + " )\r\n";
             String layerdelay = "(<Delay> " + sf.m_config.layertime_ms + " )\r\n";
             String blankdelay = "(<Delay> " + sf.m_config.blanktime_ms + " )\r\n";
-
+            String raisetime = "(<Delay> " + sf.m_config.raise_time_ms + " )\r\n";
             zdist = sf.m_config.ZThick;
 
             for (int c = 0; c < sf.m_slices.Count; c++ )
@@ -95,6 +95,7 @@ namespace UV_DLP_3D_Printer
                 sb.Append(blankdelay);
                 // this move is moved to the end, so the first layer doesn't try to move up
                 sb.Append("G1 Z" + String.Format("{0:0.00000}", (zdist * zdir)) + " F" + feedrate + "\r\n");
+                sb.Append(raisetime);
             }
             //append the footer
             sb.Append(sf.m_config.FooterCode);

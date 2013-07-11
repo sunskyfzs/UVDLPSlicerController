@@ -26,6 +26,7 @@ namespace UV_DLP_3D_Printer
         public int firstlayertime_ms; // first layer exposure time 
         public int numfirstlayers;
         public int blanktime_ms; // blanking time between layers
+        public int raise_time_ms; // time delay for the z axis to raise on a per-layer basis
         public int plat_temp; // desired platform temperature in celsius 
         public bool exportgcode; // export the gcode file when slicing
         public bool exportsvg; // export the svg slices when building
@@ -137,6 +138,7 @@ namespace UV_DLP_3D_Printer
             numfirstlayers = source.numfirstlayers;
             XOffset = source.XOffset;
             YOffset = source.YOffset;
+            raise_time_ms = source.raise_time_ms;
         }
 
         public SliceBuildConfig() 
@@ -171,6 +173,7 @@ namespace UV_DLP_3D_Printer
             exportimages = false;
             direction = eBuildDirection.Bottom_Up;
             liftdistance = 5.0;
+            raise_time_ms = 750;
             SetDefaultCodes(); // set up default gcodes
         }
 
@@ -204,6 +207,7 @@ namespace UV_DLP_3D_Printer
                 numfirstlayers = int.Parse(xr.ReadElementString("NumberofBottomLayers"));
                 direction = (eBuildDirection)Enum.Parse(typeof(eBuildDirection), xr.ReadElementString("Direction"));
                 liftdistance = double.Parse(xr.ReadElementString("LiftDistance"));
+                raise_time_ms = int.Parse(xr.ReadElementString("Raise_Time_Delay"));
                 xr.ReadEndElement();
                 xr.Close();
                 
@@ -239,7 +243,7 @@ namespace UV_DLP_3D_Printer
                 xw.WriteElementString("NumberofBottomLayers", numfirstlayers.ToString());
                 xw.WriteElementString("Direction", direction.ToString());
                 xw.WriteElementString("LiftDistance", liftdistance.ToString());
-
+                xw.WriteElementString("Raise_Time_Delay",raise_time_ms.ToString());
                 xw.WriteEndElement();
                 xw.Close();
                 return true;
@@ -269,7 +273,8 @@ namespace UV_DLP_3D_Printer
             sb.Append("(Blanking Layer Time     = " + blanktime_ms + " ms )\r\n");
             sb.Append("(Platform Temp           = " + plat_temp + " degrees celsius)\r\n");
             sb.Append("(Build Direction         = " + direction.ToString() + ")\r\n");
-            sb.Append("(Lift Distance           = " + liftdistance.ToString() + " mm )\r\n");            
+            sb.Append("(Lift Distance           = " + liftdistance.ToString() + " mm )\r\n");
+            sb.Append("(Raise Time Delay        = " + raise_time_ms.ToString() + " ms )\r\n");
             return sb.ToString();
         }
 
