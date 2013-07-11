@@ -12,7 +12,12 @@ namespace Engine3D
         {
             return Math.Sqrt((x * x) + (y * y) + (z * z));
         }
-
+        public void Scale(double scale) 
+        {
+            x *= scale;
+            y *= scale;
+            z *= scale;
+        }
         public double Dot(Vector3d v) //dot product 
         {
 	        double dp = ( x * v.x ) +
