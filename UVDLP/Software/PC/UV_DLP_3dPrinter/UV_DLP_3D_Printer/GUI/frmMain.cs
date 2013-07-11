@@ -47,6 +47,9 @@ namespace UV_DLP_3D_Printer
         float orbitdist = -200;
         float yoffset = -10.0f;
         float xoffset = 0.0f;
+
+        float ix = 0.0f, iy = 0.0f, iz = 2.0f;
+        float ipx = 0.0f, ipy = 0.0f, ipz = 2.0f;
         public frmMain()
         {
             InitializeComponent();
@@ -516,7 +519,26 @@ namespace UV_DLP_3D_Printer
                 return;
             DisplayFunc();
         }
-
+        // draw the intersection of the current mouse point into the scene
+        private void DrawISect() 
+        {
+            // draw some lines
+            GL.Begin(BeginMode.Lines);
+            GL.Color3(Color.Red);
+            GL.LineWidth(50);
+            GL.Vertex3(ix-5, iy, iz);
+            GL.Vertex3(ix+5 , iy, iz);
+            
+            GL.End();
+        
+            GL.Begin(BeginMode.Lines);
+            GL.Color3(Color.Red);
+            GL.LineWidth(50);
+            GL.Vertex3(ix, iy-5, iz);
+            GL.Vertex3(ix, iy+5, iz);
+            GL.End();
+         
+        }
 
         private void DisplayFunc() 
         {
@@ -530,7 +552,7 @@ namespace UV_DLP_3D_Printer
           GL.Rotate(orbitxpos, 1, 0, 0);
 
           UVDLPApp.Instance().Engine3D.RenderGL();
-            
+          DrawISect();
           GL.Flush();
            // glControl1.
           glControl1.SwapBuffers();                                    
@@ -620,10 +642,106 @@ namespace UV_DLP_3D_Printer
 
             return vec;
         }
+        private void TestHitTest(int X, int Y)
+        {
+            // show 2d coords
+            // convert from screen 2d to     
+            lblDebug.Text = "Screen X,Y = (" + X.ToString() + "," + Y.ToString() + ")\r\n";
+            
+            int w = glControl1.Width;
+            int h = glControl1.Height;
+            lblDebug.Text += "Screen Width/Height = " + w.ToString() + "," + h.ToString() + "\r\n";
+            float aspect = ((float)glControl1.Width) / ((float)glControl1.Height);
+            lblDebug.Text += "Screen Aspect = " + aspect.ToString() + "\r\n";
+            int window_y = (h - Y) - h/2;
+            double norm_y = (double)(window_y)/(double)(h/2);
+            int window_x = X - w/2;
+            double norm_x = (double)(window_x)/(double)(w/2);
+            // the x/y coordinate is now un-projected from screen to camara space
+            //lblDebug.Text += "Normalized X/Y = (" + String.Format("{0:0.00}", norm_x) + "," + String.Format("{0:0.00}", norm_y) + ")\r\n";
+            lblDebug.Text += "Eye Pick Vec =  (" + String.Format("{0:0.00}", norm_x) + ", " + String.Format("{0:0.00}", norm_y) + ", -1 )\r\n";
+            // now multiply it by the inverse of the projection matrix
+            // to get it into world space.
+            Matrix4 modelViewMatrix;//, projectionMatrix;
+            GL.GetFloat(GetPName.ModelviewMatrix, out modelViewMatrix);
+            Vector4 vec,vecpnt;
+
+            vec.X = (float)norm_x;
+            vec.Y = (float)norm_y;
+            vec.Z = -1.0f;
+            vec.W = 0.0f;// 1.0f;
+
+            //vec.Normalize();
+           // vecpnt.X = 0.0f;
+           // vecpnt.Y = 0.0f;
+            vecpnt.X = (float)norm_x;
+            vecpnt.Y = (float)norm_y;
+            vecpnt.Z = 0.0f;
+            vecpnt.W = 1.0f;
+
+            Matrix4 viewInv = Matrix4.Invert(modelViewMatrix);
+            //Matrix4 projInv = Matrix4.Invert(projection);
+            //Vector4.Transform(ref vec, ref projInv, out vec);
+            //vec.Normalize();
+            //vec.Scale(.5f, .5f, .5f, .5f);
+            Vector4.Transform(ref vec, ref viewInv, out vec);
+            Vector4.Transform(ref vecpnt, ref viewInv, out vecpnt);
+            
+            lblDebug.Text += "World Pick Vec =  (" + String.Format("{0:0.00}", vec.X) + ", " + String.Format("{0:0.00}", vec.Y) + "," + String.Format("{0:0.00}", vec.Z) + ")\r\n";
+            lblDebug.Text += "World Pick Pnt =  (" + String.Format("{0:0.00}", vecpnt.X) + ", " + String.Format("{0:0.00}", vecpnt.Y) + "," + String.Format("{0:0.00}", vecpnt.Z) + ")\r\n";
+            // ray vector
+            /*
+            ix = vec.X + vecpnt.X ;
+            iy = vec.Y + vecpnt.Y ;
+            iz = vec.Z + vecpnt.Z;
+
+            ipx = vecpnt.X;
+            ipy = vecpnt.Y;
+            ipz = vecpnt.Z;
+            */
+            Point3d origin = new Point3d();
+            Point3d intersect = new Point3d();
+            Engine3D.Vector3d dir = new Engine3D.Vector3d();
+
+            origin.Set(vecpnt.X, vecpnt.Y, vecpnt.Z,0);
+            dir.Set(vec.X, vec.Y, vec.Z, 0);
+
+            if (SupportGenerator.FindIntersection(dir, origin, ref intersect)) 
+            {
+                lblDebug.Text += "Intersection @ =  (" + String.Format("{0:0.00}", intersect.x) + ", " + String.Format("{0:0.00}", intersect.y) + "," + String.Format("{0:0.00}", intersect.z) + ")\r\n";
+                ix = (float)intersect.x;
+                iy = (float)intersect.y;
+                iz = (float)intersect.z;
+            }
+            //ray point 
+            //GL.GetFloat(GetPName.ProjectionMatrix, out projectionMatrix);
+            /*
+            (Note that most window systems place the mouse coordinate origin in the upper left of the window instead of the lower left. 
+            That's why window_y is calculated the way it is in the above code. When using a glViewport() that doesn't match the window height,
+            the viewport height and viewport Y are used to determine the values for window_y and norm_y.)
+
+            The variables norm_x and norm_y are scaled between -1.0 and 1.0. Use them to find the mouse location on your zNear clipping plane like so:
+
+            float y = near_height * norm_y;
+            float x = near_height * aspect * norm_x;
+            Now your pick ray vector is (x, y, -zNear).
+
+            To transform this eye coordinate pick ray into object coordinates, multiply it by the inverse of the ModelView matrix in use 
+            when the scene was rendered. When performing this multiplication, remember that the pick ray is made up of a vector and a point, 
+            and that vectors and points transform differently. You can translate and rotate points, but vectors only rotate. 
+            The way to guarantee that this is working correctly is to define your point and vector as four-element arrays, 
+            as the following pseudo-code shows:
+
+            float ray_pnt[4] = {0.f, 0.f, 0.f, 1.f};
+            float ray_vec[4] = {x, y, -near_distance, 0.f};
+            The one and zero in the last element determines whether an array transforms as a point or a vector when multiplied by the 
+            inverse of the ModelView matrix.*/
+        }
         private void HitTestScene(int x, int y) 
         {
             //GL.u
             Point pnt = convertScreenToWorldCoords(x, y);
+
         }
         private void glControl1_MouseUp(object sender, MouseEventArgs e)
         {
@@ -642,8 +760,10 @@ namespace UV_DLP_3D_Printer
 
         }
 
+
         private void glControl1_MouseMove(object sender, MouseEventArgs e)
         {
+            TestHitTest(e.X,e.Y);
             double dx = 0, dy = 0;
             if (lmdown || rmdown || mmdown)
             {
@@ -1380,6 +1500,11 @@ namespace UV_DLP_3D_Printer
         private void addAutomaticSupportsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             UVDLPApp.Instance().AddAutoSupports();
+        }
+
+        private void treeScene_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+
         }
     }
 }

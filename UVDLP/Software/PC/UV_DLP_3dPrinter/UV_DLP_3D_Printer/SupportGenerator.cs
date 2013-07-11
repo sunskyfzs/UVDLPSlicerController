@@ -35,6 +35,56 @@ namespace UV_DLP_3D_Printer
            // double 
         }
          * */
+
+        public static bool FindIntersection(Vector3d direction, Point3d origin, ref Point3d intersect)
+        {
+            UVDLPApp.Instance().CalcScene();
+            //bool intersected = false;
+
+          //  Point3d bpoint, tpoint;
+          //  Point3d lowest = new Point3d(); // the lowest point of intersection on the z axis
+            direction.Normalize();
+            direction.Scale(100.0);
+            Point3d endp = new Point3d();
+            endp.Set(origin);
+            endp.x += direction.x;
+            endp.y += direction.y;
+            endp.z += direction.z;
+            /*
+            intersect = new Point3d();
+            intersect.x = 0.0d;
+            intersect.y = 0.0d;
+            intersect.z = 0.0d;
+            */
+            //intersect the scene with a ray
+
+           // intersected = false;
+            foreach (Polygon p in UVDLPApp.Instance().Scene.m_lstpolys)
+            {
+                intersect = new Point3d();
+                // try a less- costly sphere intersect here   
+                if (RTUtils.IntersectSphere(origin, endp, ref intersect, p.m_center, p.m_radius))
+                {
+                    // if it intersects,
+                    if (RTUtils.IntersectPoly(p, origin, endp, ref intersect))
+                    {
+                        return true;
+                        /*
+                        // and it's the lowest one
+                        if (intersect.z <= lowest.z)
+                        {
+                            //save this point
+                            intersected = true;
+                            lowest.Set(intersect);
+                        }
+                         * */
+                    }
+                }
+            }
+
+
+            return false;
+        }
         public SupportGenerator() 
         {
         }

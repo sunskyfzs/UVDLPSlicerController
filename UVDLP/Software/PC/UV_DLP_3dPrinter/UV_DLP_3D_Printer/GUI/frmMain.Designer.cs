@@ -56,6 +56,8 @@
             this.tbScale = new System.Windows.Forms.TabPage();
             this.cmdScale = new System.Windows.Forms.Button();
             this.txtScale = new System.Windows.Forms.TextBox();
+            this.tabDebug = new System.Windows.Forms.TabPage();
+            this.lblDebug = new System.Windows.Forms.Label();
             this.chkWireframe = new System.Windows.Forms.CheckBox();
             this.treeScene = new System.Windows.Forms.TreeView();
             this.tabMain = new System.Windows.Forms.TabControl();
@@ -124,6 +126,7 @@
             this.tbMove.SuspendLayout();
             this.tbRotate.SuspendLayout();
             this.tbScale.SuspendLayout();
+            this.tabDebug.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabModel1.SuspendLayout();
             this.tabGCode.SuspendLayout();
@@ -187,11 +190,12 @@
             this.tabControl1.Controls.Add(this.tbMove);
             this.tabControl1.Controls.Add(this.tbRotate);
             this.tabControl1.Controls.Add(this.tbScale);
+            this.tabControl1.Controls.Add(this.tabDebug);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(0, 252);
+            this.tabControl1.Location = new System.Drawing.Point(0, 366);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(235, 410);
+            this.tabControl1.Size = new System.Drawing.Size(235, 296);
             this.tabControl1.TabIndex = 7;
             // 
             // tbMove
@@ -210,7 +214,7 @@
             this.tbMove.Location = new System.Drawing.Point(4, 25);
             this.tbMove.Name = "tbMove";
             this.tbMove.Padding = new System.Windows.Forms.Padding(3);
-            this.tbMove.Size = new System.Drawing.Size(227, 381);
+            this.tbMove.Size = new System.Drawing.Size(227, 267);
             this.tbMove.TabIndex = 0;
             this.tbMove.Text = "Move";
             this.tbMove.UseVisualStyleBackColor = true;
@@ -333,7 +337,7 @@
             this.tbRotate.Location = new System.Drawing.Point(4, 25);
             this.tbRotate.Name = "tbRotate";
             this.tbRotate.Padding = new System.Windows.Forms.Padding(3);
-            this.tbRotate.Size = new System.Drawing.Size(227, 381);
+            this.tbRotate.Size = new System.Drawing.Size(227, 416);
             this.tbRotate.TabIndex = 1;
             this.tbRotate.Text = "Rotate";
             this.tbRotate.UseVisualStyleBackColor = true;
@@ -402,10 +406,9 @@
             // 
             this.tbScale.Controls.Add(this.cmdScale);
             this.tbScale.Controls.Add(this.txtScale);
-            this.tbScale.Controls.Add(this.chkWireframe);
             this.tbScale.Location = new System.Drawing.Point(4, 25);
             this.tbScale.Name = "tbScale";
-            this.tbScale.Size = new System.Drawing.Size(227, 381);
+            this.tbScale.Size = new System.Drawing.Size(227, 416);
             this.tbScale.TabIndex = 2;
             this.tbScale.Text = "Scale";
             this.tbScale.UseVisualStyleBackColor = true;
@@ -428,12 +431,33 @@
             this.txtScale.TabIndex = 5;
             this.txtScale.Text = "1.0";
             // 
+            // tabDebug
+            // 
+            this.tabDebug.Controls.Add(this.lblDebug);
+            this.tabDebug.Controls.Add(this.chkWireframe);
+            this.tabDebug.Location = new System.Drawing.Point(4, 25);
+            this.tabDebug.Name = "tabDebug";
+            this.tabDebug.Size = new System.Drawing.Size(227, 416);
+            this.tabDebug.TabIndex = 3;
+            this.tabDebug.Text = "Debug";
+            this.tabDebug.UseVisualStyleBackColor = true;
+            // 
+            // lblDebug
+            // 
+            this.lblDebug.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblDebug.Location = new System.Drawing.Point(0, 0);
+            this.lblDebug.Name = "lblDebug";
+            this.lblDebug.Size = new System.Drawing.Size(227, 395);
+            this.lblDebug.TabIndex = 0;
+            this.lblDebug.Text = "label1";
+            // 
             // chkWireframe
             // 
             this.chkWireframe.AutoSize = true;
-            this.chkWireframe.Location = new System.Drawing.Point(35, 218);
+            this.chkWireframe.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.chkWireframe.Location = new System.Drawing.Point(0, 395);
             this.chkWireframe.Name = "chkWireframe";
-            this.chkWireframe.Size = new System.Drawing.Size(95, 21);
+            this.chkWireframe.Size = new System.Drawing.Size(227, 21);
             this.chkWireframe.TabIndex = 0;
             this.chkWireframe.Text = "Wireframe";
             this.chkWireframe.UseVisualStyleBackColor = true;
@@ -444,8 +468,9 @@
             this.treeScene.Dock = System.Windows.Forms.DockStyle.Top;
             this.treeScene.Location = new System.Drawing.Point(0, 0);
             this.treeScene.Name = "treeScene";
-            this.treeScene.Size = new System.Drawing.Size(235, 252);
+            this.treeScene.Size = new System.Drawing.Size(235, 366);
             this.treeScene.TabIndex = 6;
+            this.treeScene.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeScene_AfterSelect);
             this.treeScene.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeScene_NodeMouseClick);
             // 
             // tabMain
@@ -698,32 +723,33 @@
             this.cmdActions.Name = "cmdActions";
             this.cmdActions.Size = new System.Drawing.Size(70, 52);
             this.cmdActions.Text = "Actions";
+            this.cmdActions.Visible = false;
             // 
             // mnuView
             // 
             this.mnuView.Name = "mnuView";
-            this.mnuView.Size = new System.Drawing.Size(119, 22);
+            this.mnuView.Size = new System.Drawing.Size(152, 22);
             this.mnuView.Text = "View";
             this.mnuView.Click += new System.EventHandler(this.mnuView_Click);
             // 
             // mnuMove
             // 
             this.mnuMove.Name = "mnuMove";
-            this.mnuMove.Size = new System.Drawing.Size(119, 22);
+            this.mnuMove.Size = new System.Drawing.Size(152, 22);
             this.mnuMove.Text = "Move";
             this.mnuMove.Click += new System.EventHandler(this.mnuMove_Click);
             // 
             // mnuRotate
             // 
             this.mnuRotate.Name = "mnuRotate";
-            this.mnuRotate.Size = new System.Drawing.Size(119, 22);
+            this.mnuRotate.Size = new System.Drawing.Size(152, 22);
             this.mnuRotate.Text = "Rotate";
             this.mnuRotate.Click += new System.EventHandler(this.mnuRotate_Click);
             // 
             // mnuScale
             // 
             this.mnuScale.Name = "mnuScale";
-            this.mnuScale.Size = new System.Drawing.Size(119, 22);
+            this.mnuScale.Size = new System.Drawing.Size(152, 22);
             this.mnuScale.Text = "Scale";
             this.mnuScale.Click += new System.EventHandler(this.mnuScale_Click);
             // 
@@ -781,6 +807,7 @@
             // 
             // printToolStripMenuItem
             // 
+            this.printToolStripMenuItem.Enabled = false;
             this.printToolStripMenuItem.Name = "printToolStripMenuItem";
             this.printToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.printToolStripMenuItem.Text = "Print";
@@ -979,6 +1006,8 @@
             this.tbRotate.ResumeLayout(false);
             this.tbScale.ResumeLayout(false);
             this.tbScale.PerformLayout();
+            this.tabDebug.ResumeLayout(false);
+            this.tabDebug.PerformLayout();
             this.tabMain.ResumeLayout(false);
             this.tabModel1.ResumeLayout(false);
             this.tabGCode.ResumeLayout(false);
@@ -1089,6 +1118,8 @@
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.ToolStripMenuItem addManualSupportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addAutomaticSupportsToolStripMenuItem;
+        private System.Windows.Forms.TabPage tabDebug;
+        private System.Windows.Forms.Label lblDebug;
     }
 }
 
